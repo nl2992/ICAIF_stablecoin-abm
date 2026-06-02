@@ -1,0 +1,20 @@
+# Intervention sweep configuration
+
+n_steps: 150
+n_seeds: 10
+output_path: experiments/results/sweep_results.csv
+
+# Intervention knob ranges (used by sweep.py)
+# The DEFAULT_SWEEP grid in interventions.py covers these automatically.
+# Override here to run a custom subset.
+intervention_labels:
+  - baseline
+  - transparency_daily
+  - transparency_weekly
+  - gate_fee_1pct
+  - gate_fee_2pct
+  - gate_queue
+  - cb_5pct_12steps
+  - cb_10pct_24steps
+  - lp_subsidy_1bp
+  - combined

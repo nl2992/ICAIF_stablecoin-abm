@@ -1,0 +1,30 @@
+# Base simulation configuration
+
+# RL training
+agent_type: arbitrageur
+total_timesteps: 500_000
+save_path: experiments/results/ppo_arb
+
+env:
+  max_steps: 200
+  market_kwargs:
+    reserve:
+      initial_ratio: 1.0
+      mean_ratio: 1.0
+      speed: 0.05
+      vol: 0.015
+
+ppo:
+  learning_rate: 3.0e-4
+  n_steps: 2048
+  batch_size: 64
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+
+# Calibration
+calibration:
+  n_steps: 200
+  n_seeds: 10
