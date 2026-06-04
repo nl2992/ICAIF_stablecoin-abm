@@ -79,6 +79,30 @@ def test_interventions_reduce_contagion():
     assert rs < base
 
 
+def test_exposure_matrix_documented_structure():
+    from stablesim.netcontagion.exposure import exposure_matrix
+    nodes = ["USDC/binance", "DAI/coinbase", "BUSD/binance", "TUSD/binance"]
+    W, out_exp = exposure_matrix(nodes)
+    # DAI holds USDC (~0.5); BUSD holds nothing and is held by no one
+    assert W[1, 0] == 0.5                       # DAI <- USDC
+    assert out_exp["BUSD"] == 0.0               # no stablecoin backed by BUSD -> spurious
+    assert out_exp["USDC"] == 0.5               # USDC is held by DAI
+    assert W[2].sum() == 0.0 and W[:, 2].sum() == 0.0  # BUSD fully isolated
+
+
+def test_panic_channel_depegs_non_exposed_victims():
+    # network with NO edges: only the origin-driven panic can move the victims
+    nodes = ["O", "V1", "V2"]
+    W = np.zeros((3, 3))
+    net = ContagionNetwork(nodes=nodes, W=W, kappa=0.01, panic_gain=0.05,
+                           common=0.0, sigma=0.0)
+    d = net.simulate("O", 0.15, shock_step=20, n_steps=200, seed=0, noise=False)
+    assert np.abs(d[:, 1]).max() > 0.001        # V1 depegs via panic despite no W edge
+    # and protecting the origin removes the panic-driven contagion
+    dp = net.simulate("O", 0.15, shock_step=20, n_steps=200, seed=0, noise=False, protect="O")
+    assert np.abs(dp[:, 1]).max() < 0.1 * np.abs(d[:, 1]).max() + 1e-9
+
+
 def test_rl_env_step_contract():
     import numpy as np
     from stablesim.netcontagion.rl_env import RegulatorEnv

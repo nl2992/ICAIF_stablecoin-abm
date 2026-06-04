@@ -89,6 +89,7 @@ class ContagionNetwork:
     stress_thr: float = 0.0015        # |d| below which a venue does not transmit (fraction)
     sigma: float = 0.0008             # idiosyncratic noise std
     common: float = 0.0015            # common market-factor std
+    panic_gain: float = 0.0           # origin-driven confidence spillover (see below)
     dt: float = 1.0
     kappa_node: Optional[np.ndarray] = None  # optional per-node recovery (reserve strength)
 
@@ -130,6 +131,15 @@ class ContagionNetwork:
                    + inflow
                    + common_eps
                    + (rng.normal(0.0, svol, self.N) if svol else 0.0))
+            # Origin-driven panic / confidence spillover: the market-wide flight from
+            # stablecoins is CAUSED by the origin's distress, so it scales with the origin's
+            # current depeg and vanishes when the origin is held at peg. This is the channel
+            # by which non-exposed coins (no balance-sheet link) still depeg — and the reason
+            # protecting the origin (not a co-mover) removes that contagion too.
+            if self.panic_gain > 0 and s_idx >= 0:
+                panic = self.panic_gain * abs(prev[s_idx])
+                cur -= panic
+                cur[s_idx] += panic  # origin's own dynamics are its shock + recovery, not panic
             if s_idx >= 0 and t == shock_step:
                 cur[s_idx] -= shock_size  # depeg the origin downward
             if p_idx >= 0:
