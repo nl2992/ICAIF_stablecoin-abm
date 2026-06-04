@@ -116,3 +116,19 @@ rediscovering the causal targets and ignoring the spurious correlational hub.
 KMP_DUPLICATE_LIB_OK=TRUE OMP_NUM_THREADS=1 python scripts/run_netcontagion_join.py
 ```
 Outputs under `experiments/results/netcontagion/`.
+
+## Causal-claim robustness (four checks)
+
+1. **Documented exposure network** (`run_exposure_join.py`, `exposure_join.json`): re-deriving
+   W from documented reserve linkages calibrates 4/4 and gives **BUSD out-exposure 0.0 → causal
+   Δ 0.0** (mechanically spurious), USDC causal. Concordant with lead-lag → finding independent
+   of how the network is derived.
+2. **Placebo control** (`run_placebo_control.py`): on synthetic data with known ground truth,
+   the knockout scores the planted spurious co-mover **exactly 0** and true transmitters
+   positive — correlation centrality cannot (spread 0.024). Method recovers ground truth.
+3. **±30% calibration uncertainty** (`run_robustness_welfare.py`): USDC top-causal 100%, BUSD
+   inert 100% across 60 draws.
+4. **Adaptive agents / Lucas critique** (`run_adaptive_robustness.py`): an endogenous adaptive
+   redeemer amplifies contagion 7.7×; causal ranking unchanged (USDC causal, BUSD inert); but
+   the intervention ranking FLIPS — circuit breaker 63%→**95%**, reserve 79%→30% — because the
+   breaker interrupts the self-reinforcing run. Static-agent analysis would mis-rank policies.
