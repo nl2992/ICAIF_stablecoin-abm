@@ -66,3 +66,25 @@ def test_moments_keys_present():
     for k in ("contagion_magnitude", "crisis_half_life", "baseline_price_vol", "cross_venue_rho"):
         assert k in m
     assert np.isfinite(m["crisis_half_life"])  # analytic ln2/kappa, never NaN
+
+
+def test_interventions_reduce_contagion():
+    net = _line_network()
+    measure = ["B", "C"]
+    base = net.contagion_over("A", 0.15, measure)
+    # circuit breaker (tight cap) and reserve strengthening on the source both help
+    cb = net.contagion_over("A", 0.15, measure, cb_threshold=0.02)
+    rs = net.contagion_over("A", 0.15, measure, kappa_scale={"A": 10.0})
+    assert cb < base
+    assert rs < base
+
+
+def test_rl_env_step_contract():
+    import numpy as np
+    from stablesim.netcontagion.rl_env import RegulatorEnv
+    net = _line_network()
+    env = RegulatorEnv(net, "A", 0.15)
+    obs, _ = env.reset(seed=0)
+    assert obs.shape == (net.N * 3,)
+    obs, reward, term, trunc, info = env.step(np.zeros(net.N))
+    assert term and "alloc" in info and np.isfinite(reward)
