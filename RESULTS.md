@@ -57,6 +57,28 @@ Per-node knockout: protect node X (hold it at peg), measure the change in contag
    ABM causal effect is **−0.77** — the correlational hub ranking does not (here, inversely)
    track causal importance. This is the XAI "spurious-correlation" result, made causal.
 
+## Policy-intervention sweep (the regulatory payoff)
+
+`scripts/run_intervention_sweep.py` → `experiments/results/netcontagion/`. Each policy is
+scored by total system contagion (mean peak |dev| over non-origin victims).
+
+| intervention | best setting | contagion reduction |
+|---|---|---|
+| targeted protection (bail out USDC) | full backstop | **100%** |
+| targeted protection (bail out DAI, the relay) | full backstop | 98% |
+| redemption gating (coupling → 0) | full halt | 100% |
+| reserve strengthening (USDC κ ×20) | — | 89% |
+| circuit breaker | cap 2% | 85% |
+| targeted protection (bail out **BUSD**) | full backstop | **0%** |
+| reserve strengthening (**BUSD** κ ×20) | — | **0%** |
+
+**Headline policy result (`policy_comparison.json`, `fig_interventions.png`):**
+a budget-constrained regulator who can backstop ONE venue and picks by the GNN's
+**correlational** hub ranking protects **BUSD → 0% contagion reduction** (wasted budget);
+picking by the ABM's **causal** ranking protects **USDC → 100% reduction**. This is the
+concrete cost of acting on correlation instead of causation — directly relevant to
+reserve-transparency and intervention design under the GENIUS Act / MiCA.
+
 ## Honest limitations
 
 - The directed network W is estimated from 1-min lead-lag, which can over-credit thinly
