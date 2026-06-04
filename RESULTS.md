@@ -100,6 +100,32 @@ transmission-network features (no causal labels) learns to allocate reserve budg
 **USDC 1.0 / DAI 0.48 / BUSD 0.0**, achieving **93.7%** contagion reduction — independently
 rediscovering the causal targets and ignoring the spurious correlational hub.
 
+## Closing the reviewer objections (round 4)
+
+**Balance-sheet exposure network** (`run_exposure_join.py`, `exposure_join.json`). To remove the
+"causal structure is itself observational" worry, $W$ is rebuilt from DOCUMENTED reserve
+exposures (DAI/FRAX hold USDC; BUSD/TUSD/USDP/USDT independent). Calibrates **4/4**, and BUSD's
+documented out-exposure is **0.0** (no stablecoin holds it) → causal $\Delta=0$: mechanically,
+not just statistically, spurious. Concordant with the lead-lag derivation (BUSD inert + origin
+dominant under both). `fig_exposure_vs_predicted.png`.
+
+**Placebo / negative control** (`run_placebo_control.py`, `placebo_control.json`). On synthetic
+data with known ground truth, the knockout assigns causal $\Delta=0.139$ to true transmitters and
+**exactly 0** to a planted spurious co-mover that correlation centrality cannot distinguish
+(spread 0.024). Method validated. Honest note: lead-lag re-estimation is degenerate under strong
+common factors — motivating the exposure-$W$ derivation.
+
+**Adaptive redeemer (Lucas critique)** (`run_adaptive_robustness.py`). An endogenous adaptive
+redeemer amplifies contagion **7.7×**, but USDC stays the top causal node and BUSD stays inert —
+conclusions are not a static-agent artifact. The intervention *ranking* flips: static reserve
+(79%) > circuit breaker (63%), but adaptive CB (95%) > reserve (30%) because the breaker
+interrupts the feedback loop. Static-agent analysis would mis-rank policies.
+
+**Forecastable causality** (`run_predictive_causality.py`, `predictive_causality.json`). The
+GNN's top correlational hub is a node with ZERO documented out-exposure (structurally
+non-transmitting) in **3/5** crises. Static out-exposure (no crisis data needed) ranks causal
+importance better than the learned GNN score (Spearman 0.20 vs 0.09).
+
 ## Honest limitations
 
 - The directed network W is estimated from 1-min lead-lag, which can over-credit thinly
