@@ -59,9 +59,14 @@ transmitting nothing to anyone, perhaps it is failing for its own, unrelated rea
 would calm nothing, and the budget would be wasted.
 
 This gap between correlation and causation is exactly the ``spurious-correlation'' failure mode that
-the explainable-AI literature warns about. With stablecoins now explicitly regulated by the US
-GENIUS Act and the EU's MiCA framework~\cite{genius2025,mica2023}, the gap is not academic: a
-contagion ranking that is acted upon by a supervisor can misallocate real intervention capacity.
+the explainable-AI literature warns about. It matters here because the stakes are concrete. The largest
+stablecoins are worth tens of billions of dollars and sit at the centre of decentralized finance, so a
+disorderly depeg can trigger forced liquidations well beyond the coin itself, and a public backstop or
+reserve-transparency programme has only finite capacity. With stablecoins now explicitly regulated by
+the US GENIUS Act and the EU's MiCA framework~\cite{genius2025,mica2023}, a contagion ranking that is
+acted upon by a supervisor can misallocate that capacity onto a venue that, in truth, transmits nothing.
+The question of which venue to protect is therefore a \emph{causal} one, and centrality alone cannot
+answer it.
 
 \subsection{Our approach: ask the counterfactual}
 The only way to know whether protecting $X$ would have stopped contagion is to ask a
@@ -95,21 +100,34 @@ of this episode ranks \textbf{BUSD} as the single most central contagion hub. We
 at face value as our input and ask whether it is \emph{causally} correct.
 
 \section{Related work}
-\paragraph{Agent-based and network models of contagion.} Network finance has long modelled distress
-propagation on exposure graphs, e.g.\ DebtRank centrality for interbank
-networks~\cite{battiston2012debtrank}, and agent-based simulators for crypto and limit-order-book
-markets~\cite{gu2024spoofability}, with continuous-time control studied
-elsewhere~\cite{huang2025ctrl}. A recurring theme is that agent-based financial models are hard to
-calibrate~\cite{mohl2025jaxmarl}; we hit exactly this wall with an AMM market and resolve it with a
-calibratable reduced form. Unlike most of this literature, which studies propagation on an
-\emph{assumed} network, we use the calibrated model to run \emph{per-node counterfactual knockouts}.
+\paragraph{Contagion across financial markets.} The question of how distress spreads through a network
+predates crypto by decades. A loss of confidence becoming self-fulfilling is the bank-run mechanism of
+Diamond and Dybvig~\cite{diamond1983bank}; its propagation through interbank exposures was modelled as
+financial contagion by Allen and Gale~\cite{allen2000financial}, given a clearing structure by Eisenberg
+and Noe~\cite{eisenberg2001systemic}, and analysed as a network-stability problem by Gai and
+Kapadia~\cite{gai2010contagion} and Acemoglu et al.~\cite{acemoglu2015systemic}. The 2008 money-market-fund
+panic, when one fund ``broke the buck'' and redemptions cascaded to others, is the closest historical
+parallel to a stablecoin depeg. A common thread in this literature is that the exposure network is
+treated as \emph{known}; the stablecoin setting is unusual in that the network must be inferred, which is
+exactly where a correlational proxy can be mistaken for a causal one.
 
-\paragraph{Explainable AI and causation.} Post-hoc attribution methods (centrality, attention,
-GNNExplainer~\cite{ying2019gnnexplainer}) are known to be unstable and to conflate correlation with
-importance; this motivates intrinsically interpretable and causal approaches~\cite{faloughi2025protohedge}.
-Our knockout is a model-based realisation of the interventionist view of causation: importance is
-defined by what changes when a node is removed. We connect a graph predictor~\cite{zhou2025bridge} to
-this causal test and find that its top hub fails it.
+\paragraph{Agent-based and network models, and calibration.} Within that tradition, distress is studied
+both by network-valuation methods such as DebtRank~\cite{battiston2012debtrank} and by agent-based
+simulators of crypto and limit-order-book markets~\cite{gu2024spoofability}, with continuous-time control
+studied elsewhere~\cite{huang2025ctrl}. A recurring difficulty is that agent-based financial models are
+hard to calibrate~\cite{mohl2025jaxmarl}; we hit exactly this wall with an automated-market-maker model
+and resolve it with a calibratable reduced form. Unlike most of this work, which studies propagation on
+an \emph{assumed} network, we use the calibrated model to run \emph{per-node counterfactual knockouts}.
+
+\paragraph{Causation, attribution, and learned policy.} Post-hoc attribution methods (centrality,
+attention, GNNExplainer~\cite{ying2019gnnexplainer}) are known to be unstable and to conflate correlation
+with importance, which motivates intrinsically interpretable and causal
+approaches~\cite{faloughi2025protohedge}. Our knockout is a model-based realisation of the
+interventionist view of causation, in which importance is defined by what changes when a variable is set
+by intervention rather than merely observed~\cite{pearl2009causality}; it is the policy analogue of an
+ablation study in machine learning. For the learned-regulator experiment we use Proximal Policy
+Optimization~\cite{schulman2017ppo}, a standard policy-gradient method. We connect a graph
+predictor~\cite{zhou2025bridge} to this causal test and find that its top hub fails it.
 
 \section{A model we can intervene on}\label{sec:model}
 
@@ -461,7 +479,7 @@ budget spent on the correlational hub (BUSD) yields $0\%$; spent on the causal p
 \end{figure*}
 
 Finally, we ask whether a learning agent, given no causal labels, would discover this on its own. We
-cast the problem as a one-shot contextual bandit and train a PPO~\cite{gu2024spoofability} regulator.
+cast the problem as a one-shot contextual bandit and train a PPO~\cite{schulman2017ppo} regulator.
 Its \emph{observation} is, for each venue, three purely structural features, its in-transmission,
 its out-transmission, and whether it is the origin, and \emph{nothing} about which venue is causal.
 Its \emph{action} is a continuous reserve-protection budget over the venues (a per-venue boost to the
