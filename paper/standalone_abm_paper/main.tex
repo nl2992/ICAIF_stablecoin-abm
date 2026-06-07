@@ -125,8 +125,11 @@ with importance, which motivates intrinsically interpretable and causal
 approaches~\cite{faloughi2025protohedge}. Our knockout is a model-based realisation of the
 interventionist view of causation, in which importance is defined by what changes when a variable is set
 by intervention rather than merely observed~\cite{pearl2009causality}. It is the policy analogue of an
-ablation study in machine learning. For the learned-regulator experiment we use Proximal Policy
-Optimization~\cite{schulman2017ppo}, a standard policy-gradient method. We connect a graph
+ablation study in machine learning. For the learned-regulator experiment we use Proximal Policy Optimization
+(PPO)~\cite{schulman2017ppo}, a policy-gradient method that learns by repeatedly
+sampling actions from the current policy, estimating the advantage of each action
+(how much better it was than average), and nudging the policy toward higher-advantage
+actions while clipping the update size to prevent destabilising large policy changes. We connect a graph
 predictor~\cite{zhou2025bridge} to this causal test and find that its top hub fails it.
 
 \section{A model we can intervene on}\label{sec:model}
@@ -168,8 +171,14 @@ large enough to matter,
 \mathrm{stress}(d)=\begin{cases} d & \text{if } |d|>\eta,\\[2pt] 0 & \text{otherwise,}\end{cases}
 \end{equation}
 so a calm coin transmits nothing and only a genuinely depegged coin drags its neighbours down. The
-edge $W_{ij}$ is \emph{directed}, meaning a depeg in coin $j$ pushes coin $i$ down in proportion to
-$W_{ij}$. We first estimate $W$ from the real minute-level data by asking which coin's moves
+\emph{contagion network} $W$ is a directed weighted graph in which each entry
+$W_{ij}$ records how strongly coin $j$'s distress is transmitted to coin $i$.  An
+entry $W_{ij}>0$ means that when $j$ depegs, it pulls $i$ toward a depeg as well
+(e.g., because $i$ holds $j$ as collateral or because they share investors); an
+entry of zero means no direct transmission.  The edge $W_{ij}$ is \emph{directed}:
+$j$ can influence $i$ strongly while $i$ barely influences $j$ in the reverse
+direction.
+We first estimate $W$ from the real minute-level data by asking which coin's moves
 \emph{lead} which others', and \S\ref{sec:exposure} replaces this with documented balance-sheet links.
 
 \paragraph{Why near-critical.} The single most important modelling choice is that the system sits
@@ -186,7 +195,14 @@ measures such as DebtRank~\cite{battiston2012debtrank}, but with an explicit rec
 origin-driven panic channel.
 
 \subsection{Calibration}
-A model is trustworthy for counterfactuals only if, left alone, it reproduces reality. We tune five
+A model is trustworthy for counterfactuals only if, left alone, it reproduces
+reality---this is the standard validation criterion for agent-based policy analysis,
+analogous to backtesting in finance.  Calibration is not merely a quality check; it
+is what converts the model from a theoretical construct into a \emph{measurement
+instrument}.  Only after confirming that the simulated crisis matches the real one
+on all four moments can we trust that the knockout experiments measure genuine causal
+effects rather than artefacts of a misspecified model.
+We tune five
 parameters so that the simulated crisis matches four empirical ``moments'' of the real USDC/SVB
 episode. The four moments are how deep the contagion goes, how long the peg takes to recover, the
 everyday volatility, and how strongly venues co-move during the crisis. Writing $m_k$ for the
