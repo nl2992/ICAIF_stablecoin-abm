@@ -109,15 +109,21 @@ class ContagionNetwork:
                  n_steps: int = 200, seed: int = 0,
                  protect: Optional[str] = None, noise: bool = True,
                  cb_threshold: Optional[float] = None,
-                 kappa_scale: Optional[Dict[str, float]] = None) -> np.ndarray:
+                 kappa_scale: Optional[Dict[str, float]] = None,
+                 protect_from_step: int = 0,
+                 protect_nodes: Optional[List[str]] = None) -> np.ndarray:
         """Return d (n_steps, N). `protect` clamps that node's deviation to 0 throughout.
+        `protect_nodes` is a list of nodes to protect simultaneously (overrides `protect`).
+        `protect_from_step` delays protection onset — used for intervention timing analysis.
         With noise=False the run is the DETERMINISTIC shock propagation (no idiosyncratic
         or common factor) — used for the causal knockout so Δ-contagion is not
         contaminated by noise extrema over the horizon."""
         rng = np.random.default_rng(seed)
         d = np.zeros((n_steps, self.N))
         s_idx = self.idx.get(shock_node, -1)
-        p_idx = self.idx.get(protect, -1) if protect else -1
+        # support both single protect and a list of nodes
+        _plist = protect_nodes if protect_nodes is not None else ([protect] if protect else [])
+        p_idxs = [self.idx[n] for n in _plist if n in self.idx]
         cvol = self.common if noise else 0.0
         svol = self.sigma if noise else 0.0
         # interventions: per-node recovery boost (reserve strengthening) + circuit breaker
@@ -162,8 +168,9 @@ class ContagionNetwork:
                 cur -= a_force * np.sign(prev)   # pushes back toward peg
             if s_idx >= 0 and t == shock_step:
                 cur[s_idx] -= shock_size  # depeg the origin downward
-            if p_idx >= 0:
-                cur[p_idx] = 0.0          # protected node held at peg
+            if p_idxs and t >= protect_from_step:
+                for pi in p_idxs:
+                    cur[pi] = 0.0          # protected nodes held at peg
             # circuit breaker caps the depeg magnitude; default cap prevents blow-up.
             d[t] = np.clip(cur, -cap, cap)
         return d
@@ -199,13 +206,16 @@ class ContagionNetwork:
     def contagion_over(self, shock_node: str, shock_size: float, measure: List[str],
                        protect: Optional[str] = None, n_steps: int = 250,
                        shock_step: int = 40, cb_threshold: Optional[float] = None,
-                       kappa_scale: Optional[Dict[str, float]] = None) -> float:
+                       kappa_scale: Optional[Dict[str, float]] = None,
+                       protect_from_step: int = 0,
+                       protect_nodes: Optional[List[str]] = None) -> float:
         """Mean peak |dev| over a FIXED `measure` node-set, on the deterministic
         propagation. Used for causal knockout AND intervention outcomes: comparing
         intervention vs none over the SAME measure set isolates the intervention's effect."""
         d = self.simulate(shock_node, shock_size, shock_step, n_steps, seed=0,
                           protect=protect, noise=False, cb_threshold=cb_threshold,
-                          kappa_scale=kappa_scale)
+                          kappa_scale=kappa_scale, protect_from_step=protect_from_step,
+                          protect_nodes=protect_nodes)
         cols = [self.idx[m] for m in measure if m in self.idx]
         if not cols:
             return 0.0
