@@ -36,9 +36,12 @@ model built from \emph{documented reserve holdings}, rather than estimated price
 stress. The finding survives four independent robustness checks, namely $\pm30\%$ calibration uncertainty,
 a strategic two-agent market, a switch from estimated to documented network structure, and a
 synthetic placebo control. The policy consequence is concrete. A regulator who backstops the
-correlational hub achieves $0\%$ contagion reduction, while the causal target achieves $100\%$. And
-a reinforcement-learning regulator, given only the network and no causal labels, independently learns
-to protect the causal venues and ignore the spurious hub.
+correlational hub achieves $0\%$ contagion reduction, while the causal target achieves $100\%$. The
+predicted hub ranking is \emph{negatively} correlated with the true causal ranking
+(Spearman~$\rho{=}{-}0.77$ for the SVB episode): the most correlationally central venue is the
+least causally relevant. An RL regulator, given only the network and no causal labels, independently
+learns to protect the causal venues and ignore the spurious hub, achieving $93.7\%$ contagion
+reduction.
 \end{abstract}
 
 \keywords{stablecoins, financial contagion, agent-based models, causal inference, counterfactual
@@ -278,8 +281,13 @@ central venue is the least causal.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/01_causal_join.png}
-\caption{Correlation versus causation. The predictor's \#1 hub (BUSD, red $\times$) has causal effect
-$\approx 0$. The venue with real causal effect (the relay DAI) was not flagged as a hub.}
+\caption{Correlation is not causation. Y-axis: ABM causal effect as \% contagion reduction from a full
+backstop (from intervention sweep). X-axis: GNN predicted hub importance (normalized).
+The predictor's \#1 hub (\textbf{BUSD}, red~$\times$) achieves \textbf{0\%} contagion reduction at
+any intervention intensity---structurally incapable because no stablecoin holds it as backing.
+The true relay (\textbf{DAI}, green circle) is invisible to the GNN yet reduces contagion by
+\textbf{97.9\%} when protected. Protecting the origin (\textbf{USDC}, navy triangle) removes
+\textbf{100\%}. Spearman $\rho=-0.77$ between predicted and causal rankings for this episode.}
 \label{fig:join}
 \end{figure}
 
