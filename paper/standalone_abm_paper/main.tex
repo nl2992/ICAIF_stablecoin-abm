@@ -344,8 +344,12 @@ We subject the headline to four independent stress tests.
 
 \paragraph{(1) Calibration uncertainty.} The calibration is not exact, so we perturb the model's
 parameters and network by $\pm30\%$ over 60 random draws and re-run the knockout. USDC is the top
-causal venue in $100\%$ of draws and BUSD stays causally inert in $100\%$ (Figure~\ref{fig:robust}).
-The conclusion is not an artifact of one lucky calibration.
+causal venue in $100\%$ of draws and BUSD stays causally inert in $100\%$ of draws; its causal
+$\Delta$ is \emph{exactly} zero at the 95th percentile of the draw distribution
+(Figure~\ref{fig:robust}). This is not a near-zero result---BUSD is
+mechanically incapable of transmitting stress because its documented out-exposure is zero, and
+no amount of parameter variation changes that structural fact.
+The conclusion is therefore not an artifact of one lucky calibration.
 
 \paragraph{(2) Strategic agents.} To address the worry that our model is too mechanical, we add two
 behavioural agents (Figure~\ref{fig:twoagent}). An \emph{adaptive redeemer} accelerates redemptions
@@ -410,16 +414,21 @@ predicted importance, near-zero causal effect).}
 
 \begin{table}[t]
 \caption{Generalization across crises. The GNN's top hub matches the causal driver in one episode but
-diverges, with a spurious, structurally non-transmitting hub, in the others.}
+diverges, with a spurious, structurally non-transmitting hub, in the others.
+Spearman $\rho$ measures rank-correlation between GNN predicted importance and ABM causal effect
+across all non-origin venues ($n=5$ or $6$); n/a = GNN and ABM agree on the top hub.
+Note that USDT (May) has $\rho{=}{+}0.77$ yet the top hub is still misidentified, confirming
+that even a globally good ranking can misallocate a regulator's first backstop dollar.}
 \label{tab:multi}
 \small
-\begin{tabular}{llll}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lllll}
 \toprule
-Episode & GNN top hub & ABM causal top & spurious? \\
+Episode & GNN top hub & ABM causal top & spurious? & Spearman $\rho$ \\
 \midrule
-USDC / SVB & BUSD & DAI & yes (BUSD) \\
-UST / Terra & USDC & USDC & no \\
-USDT (May) & USDC & TUSD & yes \\
+USDC / SVB & BUSD & DAI & yes (BUSD) & $-0.77$ \\
+UST / Terra & USDC & USDC & no & n/a \\
+USDT (May) & USDC & TUSD & yes & $+0.77$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -539,7 +548,7 @@ R(a)=\underbrace{\big(C_0-C(a)\big)}_{\text{contagion prevented}}-\;\beta\,\text
 where $C_0$ is the no-action contagion, $C(a)$ the contagion after spending $a$, and $\beta$ the unit
 cost of budget. The agent must therefore learn an efficient allocation rather than simply protect
 everyone. After training, the learned policy puts
-its budget on USDC and the relay DAI and \emph{none} on BUSD, achieving a $94\%$ contagion reduction
+its budget on USDC and the relay DAI and \emph{none} on BUSD, achieving a $93.7\%$ contagion reduction
 (Figure~\ref{fig:rl}). A learning agent given only the network's wiring therefore rediscovers the same
 causal targets the explicit knockout identifies, and, like the knockout but unlike the correlational
 ranking, never spends a cent on the spurious hub.
@@ -596,7 +605,7 @@ reserves in a single bank or in another stablecoin creates a documented transmis
 correlational predictor can only approximate at best and confuse at worst. Finally, the reinforcement
 learning result suggests this two-step procedure is not just analytically correct but learnable. A
 PPO agent given only the network's structural wiring and no causal labels independently allocates
-budget to USDC and DAI and nothing to BUSD, achieving 94\% contagion reduction. The fact that even a
+budget to USDC and DAI and nothing to BUSD, achieving $93.7\%$ contagion reduction. The fact that even a
 machine learning agent autonomously discovers the balance-sheet-consistent allocation reduces the
 burden on human judgment in time-critical situations and provides an independent validation that the
 two-step procedure is robust rather than a hand-crafted exception.
