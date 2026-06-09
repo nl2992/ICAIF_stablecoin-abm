@@ -40,8 +40,8 @@ a strategic two-agent market, a switch from estimated to documented network stru
 synthetic placebo control. The policy consequence is concrete. A regulator who backstops the
 correlational hub achieves $0\%$ contagion reduction, while the causal target achieves $100\%$. The
 predicted hub ranking is \emph{negatively} correlated with the true causal ranking
-(Spearman~$\rho{=}{-}0.77$ for the SVB episode): the most correlationally central venue is the
-least causally relevant. An RL regulator, given only the network and no causal labels, independently
+(Spearman~$\rho{=}{-}0.77$ for the SVB-specific computation, $-0.54$ harmonized across
+episodes): the most correlationally central venue is the least causally relevant. An RL regulator, given only the network and no causal labels, independently
 learns to protect the causal venues and ignore the spurious hub, achieving $93.7\%$ contagion
 reduction.
 \end{abstract}
@@ -373,14 +373,14 @@ We subject the headline to four independent stress tests.
 \paragraph{(1) Calibration uncertainty.} The calibration is not exact, so we perturb the model's
 parameters and network by $\pm30\%$ over 60 random draws and re-run the knockout. USDC is the top
 causal venue in $100\%$ of draws and BUSD stays causally inert in $100\%$ of draws; its causal
-$\Delta$ is \emph{exactly} zero at the 95th percentile of the draw distribution
-(Figure~\ref{fig:robust}). This is not a near-zero result---BUSD is
+$\Delta$ is \emph{exactly} zero at the 95th percentile of the draw distribution.
+This is not a near-zero result---BUSD is
 mechanically incapable of transmitting stress because its documented out-exposure is zero, and
 no amount of parameter variation changes that structural fact.
 The conclusion is therefore not an artifact of one lucky calibration.
 
 \paragraph{(2) Strategic agents.} To address the worry that our model is too mechanical, we add two
-behavioural agents (Figure~\ref{fig:twoagent}). An \emph{adaptive redeemer} accelerates redemptions
+behavioural agents (Table~\ref{tab:twoagent}). An \emph{adaptive redeemer} accelerates redemptions
 as a coin falls, amplifying runs. A \emph{capital-capped arbitrageur} buys depegged coins to restore
 the peg but runs out of capital in a large crisis (the classic ``limits to arbitrage''). The redeemer
 amplifies contagion $7.7\times$ and the arbitrageur damps it, yet across all four agent configurations
@@ -388,15 +388,6 @@ USDC remains the top causal venue and BUSD remains inert, so the causal conclusi
 static-model artifact (a Lucas-critique check). The best \emph{intervention} also changes. A circuit breaker, mediocre with passive agents, becomes the most effective tool once runs are
 self-reinforcing (cutting $95\%$ rather than $63\%$), because it directly interrupts the feedback
 loop. A static analysis would have mis-ranked the policies, an independently useful finding.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/08_two_agent.png}
-\caption{Strategic two-agent market. Mean victim depeg over time. The adaptive redeemer amplifies the
-crisis, the capital-capped arbitrageur damps it. In every configuration the causal ranking (USDC
-top, BUSD inert) is unchanged.}
-\label{fig:twoagent}
-\end{figure}
 
 \paragraph{(3) Network derivation.} As shown in \S\ref{sec:exposure}, replacing the estimated network
 with the documented balance-sheet network leaves the marquee result unchanged.
@@ -416,37 +407,25 @@ central but causally inert. The knockout recovers the true transmitters.}
 \label{fig:placebo}
 \end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/05_robustness.png}
-\caption{Causal effect per venue under $\pm30\%$ calibration uncertainty (60 draws). The origin
-(USDC) dominates and BUSD is pinned at zero across draws.}
-\label{fig:robust}
-\end{figure}
-
 \paragraph{Does it generalize across crises?} Across the crises we can analyze
-(Figure~\ref{fig:multi}), the predictor's top hub \emph{is} the causal driver in one (the Terra
+(Table~\ref{tab:multi}), the predictor's top hub \emph{is} the causal driver in one (the Terra
 collapse) but \emph{is not} in two others. A correlational ranking is therefore unreliable, sometimes
 right and sometimes badly wrong, which is precisely why the causal test is needed. A venue's
 documented out-exposure, which is known \emph{before} any crisis and needs no price data, ranks
 causal importance better than the learned correlational score, and the predictor's top hub is a
-structurally non-transmitting (zero-exposure) venue in three of five episodes.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/06_multi_episode.png}
-\caption{Correlation versus causation across crises. A red $\times$ marks a spurious hub (high
-predicted importance, near-zero causal effect).}
-\label{fig:multi}
-\end{figure*}
+structurally non-transmitting (zero-exposure) venue in three of five episodes
+(Table~\ref{tab:multi}).
 
 \begin{table}[t]
 \caption{Generalization across crises. The GNN's top hub matches the causal driver in one episode but
 diverges, with a spurious, structurally non-transmitting hub, in the others.
 Spearman $\rho$ measures rank-correlation between GNN predicted importance and ABM causal effect
-across all non-origin venues ($n=5$ or $6$); n/a = GNN and ABM agree on the top hub.
+across all non-origin venues ($n=5$ or $6$) under the harmonized cross-episode pipeline;
+n/a = GNN and ABM agree on the top hub.
 Note that USDT (May) has $\rho{=}{+}0.77$ yet the top hub is still misidentified, confirming
-that even a globally good ranking can misallocate a regulator's first backstop dollar.}
+that even a globally good ranking can misallocate a regulator's first backstop dollar.
+The SVB-specific join over its six venues gives a stronger $\rho{=}{-}0.77$ ($p{=}0.23$);
+we report the harmonized value here for cross-episode comparability.}
 \label{tab:multi}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -454,7 +433,7 @@ that even a globally good ranking can misallocate a regulator's first backstop d
 \toprule
 Episode & GNN top hub & ABM causal top & spurious? & Spearman $\rho$ \\
 \midrule
-USDC / SVB & BUSD & DAI & yes (BUSD) & $-0.77$ \\
+USDC / SVB & BUSD & DAI & yes (BUSD) & $-0.54$ \\
 UST / Terra & USDC & USDC & no & n/a \\
 USDT (May) & USDC & TUSD & yes & $+0.77$ \\
 \bottomrule
@@ -481,21 +460,6 @@ both & 0.0014 & \checkmark & \checkmark \\
 
 \section{Acting on causation pays}\label{sec:policy}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/11_balance_sheet_gate.png}
-\caption{The paper in one figure. Each panel is the calibrated contagion network
-during the USDC/SVB crisis, with every venue coloured by its peak depeg from the
-welfare matrix (Table~\ref{tab:interventions}). \emph{Left}, with no intervention
-the shock at the origin USDC propagates to its collateral holder DAI ($-13.8\%$)
-and mildly to USDP. \emph{Middle}, shielding BUSD, the predictor's \#1
-correlational hub, leaves every loss \emph{identical}, a $0\%$ reduction, because
-no venue holds BUSD as reserves. \emph{Right}, shielding the causal origin USDC
-zeroes the entire network, a $100\%$ reduction. The same one-venue budget buys
-nothing on the correlational hub and everything on the causal origin.}
-\label{fig:gate}
-\end{figure*}
-
 \paragraph{The four intervention levers.} We model the policy tools a stablecoin supervisor actually
 has, each as a small modification of Eq.~\eqref{eq:model}. \emph{Targeted protection}, or a backstop,
 holds a chosen venue at its peg, $d_X(t)\equiv 0$, exactly as in the knockout. \emph{Reserve
@@ -508,18 +472,9 @@ intensity ($\rho$, $b$, or $g$), and we sweep them.
 
 We close with the practical payoff. In the model, protecting USDC removes $100\%$ of the contagion. Strengthening its reserves twentyfold removes $89\%$. A circuit breaker removes $85\%$. And gating
 redemptions removes $100\%$. Protecting or strengthening BUSD removes \emph{nothing}, at any
-intensity. The welfare decomposition (Figure~\ref{fig:welfare}) makes the distributional picture
-concrete. It shows which venue bears how much loss under each policy. Protecting BUSD leaves the loss
-matrix \emph{identical} to no intervention. Every victim loses exactly as much, whereas protecting
-USDC zeroes the entire column.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/09_welfare.png}
-\caption{Welfare matrix. Peak depeg (loss) borne by each venue under each policy. Protecting BUSD is
-indistinguishable from doing nothing. Protecting USDC spares everyone.}
-\label{fig:welfare}
-\end{figure}
+intensity. The welfare decomposition makes the distributional picture concrete: protecting BUSD
+leaves the per-venue loss matrix \emph{identical} to no intervention---every victim loses exactly as
+much---whereas protecting USDC zeroes the entire column.
 
 Table~\ref{tab:interventions} reports the full sweep across intervention families and intensities.
 Two structural facts stand out. Every intervention applied to a \emph{causal} venue (USDC) or to the
@@ -546,13 +501,12 @@ reserve strengthening & \textbf{BUSD}, $\kappa\times20$ & \textbf{0\%} \\
 \end{tabular}
 \end{table}
 
-The budget comparison is the headline (Figure~\ref{fig:interventions}, shown as a side-by-side
-cascade in Figure~\ref{fig:gate}). A regulator who can backstop
+The budget comparison is the headline (Figure~\ref{fig:interventions}). A regulator who can backstop
 a single venue and chooses by the correlational hub ranking protects BUSD and achieves $0\%$
-contagion reduction. Choosing by the causal ranking protects USDC and achieves $100\%$. The
-network panels in Figure~\ref{fig:gate} make the gap visceral, since shielding BUSD leaves every
-venue's depeg unchanged while shielding USDC zeroes the whole network. The one check that
-separates the two outcomes is whether any stablecoin holds the protected venue as documented reserves.
+contagion reduction. Choosing by the causal ranking protects USDC and achieves $100\%$: shielding
+BUSD leaves every venue's depeg unchanged while shielding USDC zeroes the whole network. The one
+check that separates the two outcomes is whether any stablecoin holds the protected venue as
+documented reserves.
 
 \begin{figure*}[t]
 \centering
@@ -576,18 +530,10 @@ R(a)=\underbrace{\big(C_0-C(a)\big)}_{\text{contagion prevented}}-\;\beta\,\text
 where $C_0$ is the no-action contagion, $C(a)$ the contagion after spending $a$, and $\beta$ the unit
 cost of budget. The agent must therefore learn an efficient allocation rather than simply protect
 everyone. After training, the learned policy puts
-its budget on USDC and the relay DAI and \emph{none} on BUSD, achieving a $93.7\%$ contagion reduction
-(Figure~\ref{fig:rl}). A learning agent given only the network's wiring therefore rediscovers the same
+its budget on USDC and the relay DAI and \emph{none} on BUSD, achieving a $93.7\%$ contagion reduction.
+A learning agent given only the network's wiring therefore rediscovers the same
 causal targets the explicit knockout identifies, and, like the knockout but unlike the correlational
 ranking, never spends a cent on the spurious hub.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/10_rl_alloc.png}
-\caption{A PPO regulator, given only the network and no causal labels, learns to protect the causal
-venues (USDC, DAI) and allocate nothing to the spurious hub (BUSD).}
-\label{fig:rl}
-\end{figure}
 
 
 \subsection{Practical Recommendations for Supervisors Under GENIUS Act and MiCA}
@@ -614,7 +560,7 @@ The cost of skipping step two is not abstract. Table~\ref{tab:interventions} is 
 point. Protecting BUSD achieves 0\% contagion reduction at any intervention intensity, while the same
 budget directed at USDC achieves 100\%. A supervisor who acts on the correlational ranking alone
 therefore wastes 100\% of the intervention budget and achieves no improvement in system outcomes. The
-welfare matrix (Figure~\ref{fig:welfare}) reinforces this. Protecting BUSD leaves every victim's loss
+welfare decomposition reinforces this: protecting BUSD leaves every victim's loss
 column identical to the no-intervention baseline. This is not a marginal inefficiency in resource
 allocation. It is a complete failure to help anyone, at full cost. The two-step procedure exists
 precisely to prevent this outcome, and its computational cost is trivial. The balance-sheet network

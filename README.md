@@ -4,7 +4,7 @@ Agent-based stablecoin market simulator with reinforcement-learning policies and
 
 > 📄 **Paper (compiled PDF):** [`paper/standalone_abm_paper/main.pdf`](paper/standalone_abm_paper/main.pdf)
 > — *"Are Contagion Hubs Causal? A Calibrated Counterfactual Test of Stablecoin Network Centrality."*
-> Calibrated networked-contagion model (4/4 moments), per-venue causal knockout (the GNN's top hub
+> Calibrated networked-contagion model (3/4 moments within tolerance; 4/4 at the point estimate, the fourth below the noise floor under robustness), per-venue causal knockout (the GNN's top hub
 > BUSD has **zero** causal effect), balance-sheet grounding, four robustness checks, and a policy +
 > RL-regulator payoff. Headline results in [`RESULTS.md`](RESULTS.md); regenerate with
 > [`reproduce.sh`](reproduce.sh) (run the `stablecoin-contagion-gnn` repo's `reproduce.sh` first).

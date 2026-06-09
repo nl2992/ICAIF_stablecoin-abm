@@ -14,7 +14,7 @@ mean-reverting process with a **directed transmission network W** estimated from
 lead-lag structure of the 1-min deviations. This is smoothly calibratable and gives clean
 per-node knockout counterfactuals.
 
-## Calibration: 4/4 PASS
+## Calibration: 4/4 at point estimate (3/4 robust)
 
 Calibrated to the empirical moments (targets from the GNN export `calibration_v1.csv`
 for USDC/SVB + the locked stylized facts):
