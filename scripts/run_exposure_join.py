@@ -159,13 +159,21 @@ def _plot(cf, out_exp, gnn_top, path):
     import paper_style as ps
     ps.apply()
     fig, ax = plt.subplots(figsize=ps.TALL)
-    for _, r in cf.iterrows():
+    # Fan label offsets by x-rank so points that cluster near the origin
+    # (e.g. USDC/USDT/USDP) do not stack into an unreadable blob.
+    _fan = [(7, 6), (7, 20), (7, -14), (7, 34), (7, -28), (7, 48)]
+    _rows = list(cf.iterrows())
+    _xrank = {id(r): k for k, (_, r) in enumerate(
+        sorted(_rows, key=lambda t: t[1]["gnn_predicted_importance"]))}
+    for _, r in _rows:
         nd = r["node"]
         c = ps.RED if nd == gnn_top else ps.BLUE
         ax.scatter(r["gnn_predicted_importance"], r["out_exposure"], s=180,
                    c=c, marker="X" if nd == gnn_top else "o", edgecolor="k", lw=0.5, zorder=3)
+        dx, dy = _fan[min(_xrank[id(r)], len(_fan) - 1)]
         ax.annotate(nd, (r["gnn_predicted_importance"], r["out_exposure"]),
-                    fontsize=9, xytext=(5, 4), textcoords="offset points")
+                    fontsize=9, xytext=(dx, dy), textcoords="offset points",
+                    color=ps.INK)
     ax.set_xlabel("GNN predicted importance (correlational hub score)")
     ax.set_ylabel("Documented out-exposure\n(others' reserves backed by this asset)")
     ax.set_title("Top hub BUSD has the highest predicted importance\n"
