@@ -105,7 +105,7 @@ of this episode ranks \textbf{BUSD} as the single most central contagion hub. We
 at face value as our input and ask whether it is \emph{causally} correct.
 
 \section{Related work}
-\paragraph{Contagion across financial markets.} The question of how distress spreads through a network
+\paragraph{Contagion across financial markets} The question of how distress spreads through a network
 predates crypto by decades. A loss of confidence becoming self-fulfilling is the bank-run mechanism of
 Diamond and Dybvig~\cite{diamond1983bank}. Its propagation through interbank exposures was modelled as
 financial contagion by Allen and Gale~\cite{allen2000financial}, given a clearing structure by Eisenberg
@@ -116,7 +116,7 @@ parallel to a stablecoin depeg. A common thread in this literature is that the e
 treated as \emph{known}. The stablecoin setting is unusual in that the network must be inferred, which is
 exactly where a correlational proxy can be mistaken for a causal one.
 
-\paragraph{Agent-based and network models, and calibration.} Within that tradition, distress is studied
+\paragraph{Agent-based and network models, and calibration} Within that tradition, distress is studied
 both by network-valuation methods such as DebtRank~\cite{battiston2012debtrank} and by agent-based
 simulators of crypto and limit-order-book markets~\cite{gu2024spoofability}, with continuous-time control
 studied elsewhere~\cite{huang2025ctrl}. A recurring difficulty is that agent-based financial models are
@@ -124,7 +124,7 @@ hard to calibrate~\cite{mohl2025jaxmarl}. We hit exactly this wall with an autom
 and resolve it with a calibratable reduced form. Unlike most of this work, which studies propagation on
 an \emph{assumed} network, we use the calibrated model to run \emph{per-node counterfactual knockouts}.
 
-\paragraph{Causation, attribution, and learned policy.} Post-hoc attribution methods (centrality,
+\paragraph{Causation, attribution, and learned policy} Post-hoc attribution methods (centrality,
 attention, GNNExplainer~\cite{ying2019gnnexplainer}) are known to be unstable and to conflate correlation
 with importance, which motivates intrinsically interpretable and causal
 approaches~\cite{faloughi2025protohedge}. Our knockout is a model-based realisation of the
@@ -186,7 +186,7 @@ direction.
 We first estimate $W$ from the real minute-level data by asking which coin's moves
 \emph{lead} which others', and \S\ref{sec:exposure} replaces this with documented balance-sheet links.
 
-\paragraph{Why near-critical.} The single most important modelling choice is that the system sits
+\paragraph{Why near-critical} The single most important modelling choice is that the system sits
 close to, but below, the threshold of instability. If recovery $\kappa$ were strong relative to the
 transmission gain $c$, any depeg would be snuffed out instantly and there would be no contagion to
 study. If it were too weak, the smallest shock would blow up without bound. Real stablecoin crises
@@ -266,7 +266,7 @@ intervention is essential. It isolates $X$'s effect \emph{on others} and removes
 big victim, simply by being excluded, would appear ``important.'' A venue that transmits to no one
 has $\Delta_X\approx 0$ no matter how central it looks. The crisis origin has the largest $\Delta$.
 
-\paragraph{Experimental protocol.} Each simulated episode runs for 250 steps (one step
+\paragraph{Experimental protocol} Each simulated episode runs for 250 steps (one step
 $\approx5$ minutes, so the horizon spans the crisis and its recovery), with the shock applied at step
 40 after a calm warm-up. We compute the causal effect $\Delta_X$ on the deterministic propagation, and
 all stochastic moments (volatility, cross-venue correlation) as medians over many noisy seeds. The
@@ -275,7 +275,7 @@ modification, so every comparison holds the shock, the network, and the horizon 
 the quantity under study. This isolates the effect of interest and makes the percentage figures we
 report directly comparable.
 
-\paragraph{Tracing the cascade.} Follow the mechanism concretely. The shock hits USDC.
+\paragraph{Tracing the cascade} Follow the mechanism concretely. The shock hits USDC.
 Because DAI holds USDC as collateral, the edge $W_{\text{DAI},\text{USDC}}$ carries USDC's stress into
 DAI, which depegs in turn. The origin-driven panic term $\pi|d_{\text{USDC}}|$ simultaneously nudges
 \emph{every} coin down, which is why TUSD and USDP wobble even though they hold no USDC. Now run the
@@ -307,7 +307,7 @@ The true relay (\textbf{DAI}, green circle) is invisible to the GNN yet reduces 
 \label{fig:join}
 \end{figure}
 
-\paragraph{What each moment buys us.} The four calibration moments are not arbitrary. Each pins down a
+\paragraph{What each moment buys us} The four calibration moments are not arbitrary. Each pins down a
 different aspect of the dynamics that the counterfactual depends on. The \emph{contagion magnitude}
 fixes the overall gain, so that a knockout's percentage reduction is meaningful. The \emph{half-life}
 fixes the recovery rate $\kappa$, which determines how long a protected node's absence is felt. The
@@ -370,7 +370,7 @@ documented systemic exposure. No stablecoin's peg depends on it.}
 \section{Robustness}\label{sec:robust}
 We subject the headline to four independent stress tests.
 
-\paragraph{(1) Calibration uncertainty.} The calibration is not exact, so we perturb the model's
+\paragraph{(1) Calibration uncertainty} The calibration is not exact, so we perturb the model's
 parameters and network by $\pm30\%$ over 60 random draws and re-run the knockout. USDC is the top
 causal venue in $100\%$ of draws and BUSD stays causally inert in $100\%$ of draws. Its causal
 $\Delta$ is \emph{exactly} zero at the 95th percentile of the draw distribution.
@@ -379,7 +379,7 @@ mechanically incapable of transmitting stress because its documented out-exposur
 no amount of parameter variation changes that structural fact.
 The conclusion is therefore not an artifact of one lucky calibration.
 
-\paragraph{(2) Strategic agents.} To address the worry that our model is too mechanical, we add two
+\paragraph{(2) Strategic agents} To address the worry that our model is too mechanical, we add two
 behavioural agents (Table~\ref{tab:twoagent}). An \emph{adaptive redeemer} accelerates redemptions
 as a coin falls, amplifying runs. A \emph{capital-capped arbitrageur} buys depegged coins to restore
 the peg but runs out of capital in a large crisis (the classic ``limits to arbitrage''). The redeemer
@@ -389,10 +389,10 @@ static-model artifact (a Lucas-critique check). The best \emph{intervention} als
 self-reinforcing (cutting $95\%$ rather than $63\%$), because it directly interrupts the feedback
 loop. A static analysis would have mis-ranked the policies, an independently useful finding.
 
-\paragraph{(3) Network derivation.} As shown in \S\ref{sec:exposure}, replacing the estimated network
+\paragraph{(3) Network derivation} As shown in \S\ref{sec:exposure}, replacing the estimated network
 with the documented balance-sheet network leaves the marquee result unchanged.
 
-\paragraph{(4) Placebo / negative control.} Finally we test the method itself on synthetic data with
+\paragraph{(4) Placebo / negative control} Finally we test the method itself on synthetic data with
 a \emph{known} answer. We plant a true transmission chain plus an isolated ``co-mover'' that moves
 with everyone (via the panic factor) but transmits to no one. The knockout correctly assigns large
 causal effect to the true transmitters and \emph{exactly zero} to the planted co-mover, a distinction
@@ -460,7 +460,7 @@ both & 0.0014 & \checkmark & \checkmark \\
 
 \section{Acting on causation pays}\label{sec:policy}
 
-\paragraph{The four intervention levers.} We model the policy tools a stablecoin supervisor actually
+\paragraph{The four intervention levers} We model the policy tools a stablecoin supervisor actually
 has, each as a small modification of Eq.~\eqref{eq:model}. \emph{Targeted protection}, or a backstop,
 holds a chosen venue at its peg, $d_X(t)\equiv 0$, exactly as in the knockout. \emph{Reserve
 strengthening} raises a venue's recovery speed, $\kappa_X\to\rho\,\kappa_X$ with $\rho>1$, because a
@@ -585,7 +585,7 @@ burden on human judgment in time-critical situations and provides an independent
 two-step procedure is robust rather than a hand-crafted exception.
 
 \section{Discussion}
-\paragraph{What this means for explainable AI in finance.} Our result is a clean, quantified instance
+\paragraph{What this means for explainable AI in finance} Our result is a clean, quantified instance
 of the spurious-correlation problem that motivates intrinsic interpretability. An attribution method
 (centrality, attention) told us BUSD was \emph{the} hub. A causal test told us it transmitted nothing.
 The lesson is not that the predictor is wrong. It correctly identified a venue that moves with the
@@ -593,14 +593,14 @@ crisis, but that \emph{attribution and causation are different questions}, and a
 intervention decision needs the second. Centrality answers ``what moved together?''. The knockout
 answers ``what, if removed, would have changed the outcome?'', and only the latter is actionable.
 
-\paragraph{Why BUSD looked like a hub.} BUSD was undergoing a regulatory wind-down in early 2023, so
+\paragraph{Why BUSD looked like a hub} BUSD was undergoing a regulatory wind-down in early 2023, so
 it was being steadily redeemed and traded nervously throughout the SVB weekend. That nervous
 co-movement gave it high correlation with every other stressed coin, and hence high betweenness and
 high model attention. But co-movement driven by a coin's \emph{own} idiosyncratic troubles transmits
 nothing to others, precisely the case the knockout is built to detect, and precisely why the balance
 sheet (no one holds BUSD) is the decisive tie-breaker.
 
-\paragraph{Relation to network systemic-risk measures.} Our knockout is, in spirit, a counterfactual
+\paragraph{Relation to network systemic-risk measures} Our knockout is, in spirit, a counterfactual
 cousin of the centrality measures used in network finance. DebtRank and its relatives~\cite{battiston2012debtrank}
 score a node by how much distress propagates from it through a \emph{known} exposure network. They are
 powerful precisely because that network is given. Our setting inverts the difficulty. The exposure
@@ -612,7 +612,7 @@ whom as reserves, is recoverable from disclosures after all. Read this way, our 
 putting documented exposure, not estimated centrality, at the centre of stablecoin systemic-risk
 measurement.
 
-\paragraph{Practical takeaway for supervisors.} A reserve-transparency or backstop programme guided by
+\paragraph{Practical takeaway for supervisors} A reserve-transparency or backstop programme guided by
 a correlational contagion ranking would, in this episode, have spent its capacity on a venue with no
 systemic role. The same capacity directed by the causal ranking, or equivalently here by the
 documented reserve-exposure network, would have fully contained the cascade. Where the two disagree,
