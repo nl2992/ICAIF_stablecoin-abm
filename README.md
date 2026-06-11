@@ -1,5 +1,7 @@
 # stablecoin-abm
 
+[![CI](https://github.com/nl2992/ICAIF_stablecoin-abm/actions/workflows/ci.yml/badge.svg)](https://github.com/nl2992/ICAIF_stablecoin-abm/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](environment.yml)
+
 <p align="center">
   <img src="paper/standalone_abm_paper/figures/01_causal_join.png" width="760" alt="Correlational GNN hub ranking → calibrated agent-based counterfactual: the predi"/>
 </p>
@@ -90,7 +92,7 @@ No-intervention runs must reproduce the empirical half-lives and ρ̂ propagatio
 
 ## Reproduce (data → analysis → paper)
 
-**Prerequisites.** Python 3.11+, then:
+**Prerequisites.** Python 3.11. For the exact pinned environment use conda — `conda env create -f environment.yml && conda activate stablesim` — or with pip:
 ```bash
 pip install -r requirements.txt
 ```
