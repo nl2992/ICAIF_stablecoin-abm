@@ -1,0 +1,79 @@
+{
+  "episode": "USDC_SVB",
+  "ppo_timesteps": 12000,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "observation": "in/out-transmission only (origin flag REMOVED)",
+  "per_seed": [
+    {
+      "seed": 0,
+      "allocation": {
+        "USDC": 1.0,
+        "TUSD": 0.0,
+        "USDP": 0.0,
+        "BUSD": 0.0,
+        "DAI": 0.467,
+        "USDT": 0.0
+      },
+      "reduction_pct": 93.6
+    },
+    {
+      "seed": 1,
+      "allocation": {
+        "USDC": 1.0,
+        "TUSD": 0.0,
+        "USDP": 0.0,
+        "BUSD": 0.0,
+        "DAI": 0.429,
+        "USDT": 0.0
+      },
+      "reduction_pct": 93.4
+    },
+    {
+      "seed": 2,
+      "allocation": {
+        "USDC": 1.0,
+        "TUSD": 0.0,
+        "USDP": 0.0,
+        "BUSD": 0.0,
+        "DAI": 0.476,
+        "USDT": 0.0
+      },
+      "reduction_pct": 93.7
+    },
+    {
+      "seed": 3,
+      "allocation": {
+        "USDC": 1.0,
+        "TUSD": 0.0,
+        "USDP": 0.0,
+        "BUSD": 0.0,
+        "DAI": 0.476,
+        "USDT": 0.0
+      },
+      "reduction_pct": 93.7
+    },
+    {
+      "seed": 4,
+      "allocation": {
+        "USDC": 1.0,
+        "TUSD": 0.0,
+        "USDP": 0.0,
+        "BUSD": 0.0,
+        "DAI": 0.501,
+        "USDT": 0.0
+      },
+      "reduction_pct": 93.8
+    }
+  ],
+  "reduction_pct_mean": 93.6,
+  "reduction_pct_std": 0.14,
+  "budget_on_spurious_BUSD_max": 0.0,
+  "budget_on_origin_USDC_min": 1.0,
+  "budget_on_relay_DAI_min": 0.429
+}

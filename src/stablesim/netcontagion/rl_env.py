@@ -29,19 +29,21 @@ if gym is not None:
         metadata = {"render_modes": []}
 
         def __init__(self, net, origin: str, shock: float, kappa_boost: float = 20.0,
-                     cost_weight: float = 0.35):
+                     cost_weight: float = 0.35, include_origin_flag: bool = True):
             super().__init__()
             self.net = net
             self.origin = origin
             self.shock = shock
             self.kappa_boost = kappa_boost
             self.cost_weight = cost_weight
+            self.include_origin_flag = include_origin_flag
             self.targets = list(net.nodes)
             self.N = len(self.targets)
             self.victims = [n for n in net.nodes if n != origin]
             self.base = net.contagion_over(origin, shock, self.victims)
             self._obs = self._features()
-            self.observation_space = spaces.Box(-5.0, 5.0, shape=(self.N * 3,), dtype=np.float32)
+            n_feats = 3 if include_origin_flag else 2
+            self.observation_space = spaces.Box(-5.0, 5.0, shape=(self.N * n_feats,), dtype=np.float32)
             self.action_space = spaces.Box(0.0, 1.0, shape=(self.N,), dtype=np.float32)
 
         def _features(self) -> np.ndarray:
@@ -50,7 +52,9 @@ if gym is not None:
             inn = W.sum(axis=1)  # in-transmission (receiver)
             feats = []
             for j, nd in enumerate(self.targets):
-                feats += [float(out[j]), float(inn[j]), 1.0 if nd == self.origin else 0.0]
+                feats += [float(out[j]), float(inn[j])]
+                if self.include_origin_flag:
+                    feats += [1.0 if nd == self.origin else 0.0]
             return np.array(feats, dtype=np.float32)
 
         def reset(self, *, seed: Optional[int] = None, options=None):

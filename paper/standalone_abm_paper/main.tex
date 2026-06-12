@@ -94,7 +94,7 @@ a \emph{model} of the crisis that we can intervene on. We therefore build a cont
 calibrate it so that, left alone, it reproduces the real crisis, and then perform virtual
 ``knockout'' experiments---where a knockout \emph{protects} a venue (holds it at its peg),
 removing it as a transmitter, rather than deleting the node. This is the agent-based and network-propagation tradition of systemic-risk
-analysis, in which a calibrated simulator is used to ask mechanism and policy questions that
+analysis: a calibrated simulator answers mechanism and policy questions that
 observation alone cannot~\cite{gu2024spoofability,battiston2012debtrank}.
 
 We make the following contributions.
@@ -343,8 +343,8 @@ predictor's \#1 hub, has a causal effect of zero}. The full ranking we consume i
 normalized hub importance for this episode (a composite dominated by undirected betweenness, per
 the companion study)---BUSD~$1.00$ (rank~1), TUSD~$0.26$, USDP~$0.08$, and
 DAI and USDT~$0.00$---so the predictor scores the true relay (DAI) at zero. Figure~\ref{fig:join}
-plots, for every venue, this correlational importance against the model's causal effect. The two are
-not merely unrelated. They are \emph{negatively} associated (Spearman $-0.77$, driven by the extreme
+plots, for every venue, this correlational importance against the model's causal effect. The two
+are \emph{negatively} associated (Spearman $-0.77$, driven by the extreme
 disagreement on BUSD, top-ranked yet inert, and DAI, scored zero yet causally dominant). Here, the
 most correlationally central venue is the least causal.
 
@@ -375,11 +375,13 @@ knockout trustworthy.
 
 \section{Why BUSD is spurious, from the balance sheet}\label{sec:exposure}
 A careful reader will object that our network $W$ was \emph{estimated} from the same prices the
-predictor used, so perhaps the whole exercise is circular. We answer by rebuilding $W$ from a source
-that has nothing to do with prices, namely documented reserve holdings. A depeg in coin $j$ can
+predictor used, so perhaps the whole exercise is circular. We answer by rebuilding $W$ from documented reserve
+holdings, a source independent of prices. A depeg in coin $j$ can
 mechanically drag down coin $i$ only if $i$ holds $j$ as part of its backing. During the SVB window,
 public disclosures show DAI held roughly 50\% USDC and FRAX roughly 90\% USDC, while BUSD, TUSD, USDP,
-and USDT held no other stablecoin, and \emph{no stablecoin held BUSD as backing}.
+and USDT held no other stablecoin, and \emph{no stablecoin held BUSD as backing} (sources---MakerDAO
+PSM composition disclosures, Frax protocol documentation, issuer reserve attestations---are
+catalogued in the released code).
 
 Under this balance-sheet network the model still calibrates to the three causal moments, and BUSD's
 ``out-exposure'' (the total of other coins' reserves backed by it) is exactly zero
@@ -605,9 +607,9 @@ shows a one-venue budget spent on the correlational hub (BUSD) yielding $0\%$, a
 Finally, we ask whether a learning agent, given no causal labels, would discover this on its own. We
 cast the problem as a one-shot contextual bandit and train a PPO~\cite{schulman2017ppo} regulator.
 Its \emph{observation} is, for each venue, three structural features: its in-transmission, its
-out-transmission, and an origin indicator. The origin flag identifies the shock source, so the
-informative test is what the agent does \emph{beyond} the origin: whether it funds the relay,
-and whether it wastes budget on the spurious hub. Its \emph{action} is a continuous reserve-protection budget $a\in\mathbb{R}^N_{\ge 0}$
+out-transmission, and an origin indicator. The origin flag is not load-bearing: an ablation
+removing it (in/out-transmission only) leaves the outcome unchanged (five seeds)---full budget
+on USDC, $0.43$--$0.50$ on the relay DAI, exactly zero on BUSD, $93.6\%\pm0.1$ reduction. Its \emph{action} is a continuous reserve-protection budget $a\in\mathbb{R}^N_{\ge 0}$
 over the venues, applied as a per-venue boost to the recovery speed $\kappa$. Its \emph{reward}
 trades the contagion prevented against the budget spent,
 \begin{equation}
@@ -622,9 +624,8 @@ reward-optimal). This allocation is seed-stable. Across five independently train
 contagion reduction is $93.6\%\pm0.1\%$, and \emph{every} seed places $\ge0.9$ of its budget on
 USDC and $\le0.1$ on BUSD. Because the agent is trained and evaluated inside the calibrated
 model, this is a within-model demonstration that the causal allocation is \emph{learnable} from
-structural wiring alone, not an independent validation; its value is that the learned policy
-agrees with the explicit knockout and, unlike the correlational ranking, allocates nothing to
-the spurious hub.
+structural wiring alone, not an independent validation; its value is the agreement with the
+explicit knockout and the zero allocation to the spurious hub.
 
 
 \subsection{From a causal test to a supervisory gate}
