@@ -12,8 +12,8 @@
 \setlength{\emergencystretch}{2.2em}
 %% Modest float-spacing tightening so the bibliography lands within 8pp robustly
 %% across TeX-distribution versions (content unchanged).
-\setlength{\textfloatsep}{11pt plus 2pt minus 2pt}
-\setlength{\intextsep}{9pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{7pt plus 2pt minus 2pt}
 
 \begin{document}
 
@@ -48,10 +48,12 @@ a strategic two-agent market, a switch from estimated to documented network stru
 synthetic placebo control. The policy consequence is concrete. A regulator who backstops the
 correlational hub achieves $0\%$ contagion reduction, while the causal target achieves $100\%$. The
 predicted hub ranking is \emph{negatively} correlated with the true causal ranking
-(Spearman~$\rho{=}{-}0.77$ for the SVB-specific computation, $-0.54$ harmonized across
-episodes). The most correlationally central venue is the least causally relevant. An RL regulator, given only the network and no causal labels, independently
-learns to protect the causal venues and ignore the spurious hub, achieving $93.7\%$ contagion
-reduction.
+(Spearman~$\rho{=}{-}0.77$ for the SVB-specific six-venue computation; $-0.54$ when SVB is
+recomputed under a normalization applied uniformly across episodes for comparability). The
+most correlationally central venue is the least causally relevant. An RL regulator, trained
+on the calibrated ABM but given no explicit causal labels (only each venue's structural
+network features), independently learns to protect the causal venues and ignore the spurious
+hub, achieving $93.7\%$ contagion reduction.
 \end{abstract}
 
 \keywords{stablecoins, financial contagion, agent-based models, causal inference, counterfactual
@@ -218,7 +220,10 @@ is what converts the model from a theoretical construct into a \emph{measurement
 instrument}.  Only after confirming that the simulated crisis matches the real one
 on the three causal moments can we trust that the knockout experiments measure genuine
 causal effects rather than artefacts of a misspecified model (the baseline pre-shock
-volatility moment is an honest partial exception, see Table~\ref{tab:calib}).
+volatility moment is an honest partial exception, see Table~\ref{tab:calib}). To guard
+against circularity---our network $W$ is initially estimated from the same prices the
+predictor used---we re-derive the knockout from an independently documented reserve network
+in \S\ref{sec:exposure}, and it reaches the same verdict.
 We tune five
 parameters so that the simulated crisis matches four empirical ``moments'' of the real USDC/SVB
 episode. The four moments are how deep the contagion goes, how long the peg takes to recover, the
@@ -242,11 +247,13 @@ The targets themselves are exported
 from the companion predictor's measurements of the real data, so the two studies are genuinely coupled.
 
 \begin{table}[t]
-\caption{Calibration. Three of four empirical moments of the USDC/SVB crisis are
-reproduced within tolerance. \emph{Baseline price volatility} is matched at the
-calibration point estimate ($0.0029 \approx 0.0030$) but the model's robustness
-draws (±30\% parameter variation) have a 95\% CI of $[0.0049, 0.0121]$, placing
-the empirical value below the model's noise floor. See text for discussion.}
+\caption{Calibration. \emph{Within tolerance} means the simulated value is within a
+per-moment relative-error threshold of the empirical value ($0.25$ for contagion magnitude,
+$0.30$ for the other three). All four moments pass this gate at the calibration point
+estimate; \emph{baseline price volatility} is matched there ($0.0029 \approx 0.0030$) but
+flagged $\times$ because the model's robustness draws (±30\% parameter variation) have a 95\%
+CI of $[0.0049, 0.0121]$, placing the empirical value below the model's noise floor. See text
+for discussion.}
 \label{tab:calib}
 \small
 \setlength{\tabcolsep}{4.5pt}
@@ -337,8 +344,8 @@ central venue is the least causal.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/01_causal_join.png}
-\caption{Correlation is not causation. Y-axis. ABM causal effect as \% contagion reduction from a full
-backstop (from intervention sweep). X-axis. GNN predicted hub importance (normalized).
+\caption{Correlation is not causation. Y-axis: ABM causal effect as \% contagion reduction from a full
+backstop (from intervention sweep). X-axis: GNN predicted hub importance (normalized).
 The predictor's \#1 hub (\textbf{BUSD}, red~$\times$) achieves \textbf{0\%} contagion reduction at
 any intervention intensity, structurally incapable because no stablecoin holds it as backing.
 The true relay (\textbf{DAI}, green circle) is invisible to the GNN yet reduces contagion by
@@ -473,7 +480,8 @@ structurally non-transmitting (zero-exposure) venue in three of five episodes
 \caption{Generalization across crises. The GNN's top hub matches the causal driver in one episode but
 diverges, with a spurious, structurally non-transmitting hub, in the others.
 Spearman $\rho$ measures rank-correlation between GNN predicted importance and ABM causal effect
-across all non-origin venues ($n=5$ or $6$) under the harmonized cross-episode pipeline.
+across all non-origin venues ($n=5$ or $6$) under the \emph{harmonized} pipeline, i.e.\ the same
+score normalization applied uniformly to every episode so the values are comparable.
 N/a = GNN and ABM agree on the top hub.
 Note that USDT (May) has $\rho{=}{+}0.77$ yet the top hub is still misidentified, confirming
 that even a globally good ranking can misallocate a regulator's first backstop dollar.
@@ -525,9 +533,11 @@ intensity ($\rho$, $b$, or $g$), and we sweep them.
 
 We close with the practical payoff. In the model, protecting USDC removes $100\%$ of the contagion. Strengthening its reserves twentyfold removes $89\%$. A circuit breaker removes $85\%$. And gating
 redemptions removes $100\%$. Protecting or strengthening BUSD removes \emph{nothing}, at any
-intensity. The welfare decomposition makes the distributional picture concrete. Protecting BUSD
-leaves the per-venue loss matrix \emph{identical} to no intervention, every victim loses exactly as
-much, whereas protecting USDC zeroes the entire column.
+intensity. The welfare decomposition makes the distributional picture concrete and quantitative:
+protecting USDC \emph{Pareto-dominates} no intervention, driving every victim's peak depeg to
+zero (e.g.\ DAI $0.138\!\to\!0$, USDC $0.103\!\to\!0$), whereas protecting BUSD leaves the
+per-venue loss matrix \emph{identical} to no intervention (maximum change from baseline
+$=0$ across all six venues), so no agent benefits from the budget.
 
 Table~\ref{tab:interventions} reports the full sweep across intervention families and intensities.
 Two structural facts stand out. Every intervention applied to a \emph{causal} venue (USDC) or to the
@@ -554,12 +564,10 @@ reserve strengthening & \textbf{BUSD}, $\kappa\times20$ & \textbf{0\%} \\
 \end{tabular}
 \end{table}
 
-The budget comparison is the headline (Figure~\ref{fig:interventions}). A regulator who can backstop
-a single venue and chooses by the correlational hub ranking protects BUSD and achieves $0\%$
-contagion reduction. Choosing by the causal ranking protects USDC and achieves $100\%$. Shielding
-BUSD leaves every venue's depeg unchanged while shielding USDC zeroes the whole network. The one
-check that separates the two outcomes is whether any stablecoin holds the protected venue as
-documented reserves.
+The budget comparison is the headline (Figure~\ref{fig:interventions}): a one-venue backstop chosen
+by the correlational ranking protects BUSD ($0\%$ reduction), while the causal ranking protects USDC
+($100\%$). The one check that separates the two is whether any stablecoin holds the protected venue
+as documented reserves.
 
 \paragraph{Dose-response and budget allocation} Sweeping reserve-strengthening intensity $\rho$
 for USDC, showing $5\times$ (\$174M) reduces contagion by $64\%$, $20\times$ (\$827M) by $89\%$,
@@ -702,7 +710,7 @@ universe, making every causal statement mechanical rather than inferred. Contagi
 intended to guide intervention should report \emph{validated causation}, not centrality alone.
 
 \begin{acks}
-Code and artefacts available at [anonymized repository; link at camera-ready].
+Code and artefacts are available at an anonymized repository (link provided at camera-ready).
 \end{acks}
 
 {\footnotesize\setlength{\bibsep}{0pt plus 0.1ex}%
