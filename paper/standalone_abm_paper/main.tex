@@ -101,8 +101,10 @@ We make the following contributions.
 \begin{enumerate}
 \item A contagion model that \textbf{calibrates to within tolerance on three of four} empirical moments (contagion magnitude, crisis half-life, cross-venue correlation $\rho$. See Table~\ref{tab:calib} for the honest calibration result including the baseline-volatility caveat)
 of the USDC/SVB crisis, after we show why an off-the-shelf market simulator cannot (\S\ref{sec:model}).
-\item A per-venue \textbf{causal knockout} that \emph{refutes} the predictor's top hub. It has zero
-causal effect (\S\ref{sec:knockout}).
+\item A per-venue \textbf{causal knockout} that \emph{refutes} the predictor's top hub (zero causal
+effect, \S\ref{sec:knockout}). The knockout is a \emph{transferable audit}: any correlational
+hub-ranking method---centrality, attention, or GNNExplainer---can be tested the same way against a
+calibrated, intervenable model.
 \item A \textbf{balance-sheet} version of the model that explains the refutation mechanically and
 makes it independent of how the network is estimated (\S\ref{sec:exposure}).
 \item \textbf{Four robustness checks}, calibration uncertainty, strategic agents, network
@@ -149,8 +151,8 @@ interventionist view of causation, in which importance is defined by what change
 by intervention rather than merely observed~\cite{pearl2009causality}. It is the policy analogue of an
 ablation study in machine learning. For the learned-regulator experiment we use Proximal Policy Optimization
 (PPO)~\cite{schulman2017ppo}, a policy-gradient method that nudges the policy toward
-higher-advantage actions while clipping the update size for stability. We connect a graph
-predictor~\cite{zhou2025bridge} to this causal test and find that its top hub fails it.
+higher-advantage actions while clipping the update size for stability. We connect the companion
+graph predictor (anonymized) to this causal test and find that its top hub fails it.
 
 \section{A model we can intervene on}\label{sec:model}
 
@@ -207,11 +209,11 @@ We first estimate $W$ from the real minute-level data by asking which coin's mov
 close to, but below, the threshold of instability. If recovery $\kappa$ were strong relative to the
 transmission gain $c$, any depeg would be snuffed out instantly and there would be no contagion to
 study. If it were too weak, the smallest shock would blow up without bound. Real stablecoin crises
-sit in between. In the calibrated model this is exact, not metaphor: the netted lead-lag network is
-acyclic, so the full-stress linearization $(1{-}\kappa)I + cW$ has spectral radius
-$1{-}\kappa = 0.994$---sub-critical, with shocks decaying at the recovery rate (half-life
-${\approx}116$ steps) while the network amplifies them transiently along its directed paths
-(committed check script). Tuning the model to this near-critical
+sit in between. In the calibrated model this is exact, not metaphor: netting $W$ to each pair's dominant direction
+leaves an \emph{acyclic} lead-lag network (no directed cycle survives the threshold for this episode;
+verified in the released code), so the full-stress linearization $(1{-}\kappa)I + cW$ has spectral
+radius $1{-}\kappa = 0.994$---sub-critical, with shocks decaying at the recovery rate (half-life
+${\approx}116$ steps) while the network amplifies them transiently along its directed paths. Tuning the model to this near-critical
 regime is what lets a realistic origin shock of a few percent grow into the observed $\sim$14\%
 contagion in the victims, and it is precisely the regime the bimodal AMM market cannot
 represent. Our reduced form is a deliberately minimal object that
@@ -344,9 +346,10 @@ normalized hub importance for this episode (a composite dominated by undirected 
 the companion study)---BUSD~$1.00$ (rank~1), TUSD~$0.26$, USDP~$0.08$, and
 DAI and USDT~$0.00$---so the predictor scores the true relay (DAI) at zero. Figure~\ref{fig:join}
 plots, for every venue, this correlational importance against the model's causal effect. The two
-are \emph{negatively} associated (Spearman $-0.77$, driven by the extreme
-disagreement on BUSD, top-ranked yet inert, and DAI, scored zero yet causally dominant). Here, the
-most correlationally central venue is the least causal.
+are \emph{negatively} associated (Spearman $-0.77$ over the $n{=}4$ scored venues, not significant at
+$p{=}0.23$; the result rests on the structural balance-sheet argument of \S\ref{sec:exposure}, not on
+this small-sample rank statistic). The disagreement is driven by BUSD (top-ranked yet inert) and DAI
+(scored zero yet causally dominant): the most correlationally central venue is the least causal.
 
 \begin{figure}[t]
 \centering
@@ -392,9 +395,9 @@ documented out-edges all zero, $\Delta_{\text{BUSD}}=0$ follows from Eq.~\eqref{
 content of the variant lies elsewhere: the documented network still calibrates to the three
 causal moments, and because the two versions are calibrated separately (Table~\ref{tab:params}),
 their agreement shows the zero-exposure fact dominates the verdict regardless of the fitted
-dynamics. BUSD is spurious not as a statistical accident but as a balance-sheet fact. Table~\ref{tab:params} reports the calibrated parameters for
-the two versions side by side. They reach the same moments with similar dynamics and deliver the same
-verdict, which is the concordance underpinning the claim.
+dynamics. BUSD is spurious not as a statistical accident but as a balance-sheet fact. Table~\ref{tab:params}
+reports both versions' calibrated parameters side by side: they reach the same moments with similar
+dynamics and the same verdict.
 
 \begin{table}[t]
 \caption{Calibrated parameters for the two model versions, network estimated from prices, vs network
@@ -555,8 +558,7 @@ intensity. The welfare decomposition makes the distributional picture concrete a
 protecting USDC \emph{Pareto-dominates} no intervention, driving every victim's peak depeg to
 zero (e.g.\ DAI $0.138\!\to\!0$, USDC $0.103\!\to\!0$), whereas protecting BUSD leaves the
 per-venue loss matrix \emph{identical} to no intervention (maximum change from baseline
-$=0$ across all six venues), so no agent benefits from the budget; the full
-venue~$\times$~intervention matrix ships as a committed artifact in the repository.
+$=0$ across all six venues), so no agent benefits from the budget.
 
 Table~\ref{tab:interventions} reports the full sweep across intervention families and intensities.
 Two structural facts stand out. Every intervention applied to a \emph{causal} venue (USDC) or to the
@@ -619,8 +621,8 @@ where $C_0$ is the no-action contagion, $C(a)$ the contagion after spending $a$,
 cost of budget. The agent must therefore learn an efficient allocation rather than simply protect
 everyone. After training, the learned policy allocates
 its budget to USDC and the relay DAI and \emph{none} to BUSD, achieving a $93.7\%$ contagion reduction
-(the residual gap to $100\%$ reflects the budget penalty $\beta$: full protection is not
-reward-optimal). This allocation is seed-stable. Across five independently trained seeds the
+on the headline run (the residual gap to $100\%$ reflects the budget penalty $\beta$: full protection
+is not reward-optimal). This allocation is seed-stable. Across five independently trained seeds the
 contagion reduction is $93.6\%\pm0.1\%$, and \emph{every} seed places $\ge0.9$ of its budget on
 USDC and $\le0.1$ on BUSD. Because the agent is trained and evaluated inside the calibrated
 model, this is a within-model demonstration that the causal allocation is \emph{learnable} from
