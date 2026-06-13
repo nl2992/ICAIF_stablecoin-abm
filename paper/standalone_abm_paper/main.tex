@@ -172,7 +172,8 @@ model whose contagion magnitude is a \emph{smooth}, controllable function of its
 \includegraphics[width=\columnwidth]{figures/07_bimodal.png}
 \caption{Why we replace the AMM market. The AMM's peak depeg is bimodal in the shock intensity
 (it resists, then collapses to the price floor), so it cannot be tuned to the empirical
-$13.76\%$ depeg target. The networked-contagion model varies smoothly and hits it.}
+$13.76\%$ depeg target. The networked-contagion model varies smoothly and is calibrated to it
+(Table~\ref{tab:calib}).}
 \label{fig:bimodal}
 \end{figure}
 
@@ -460,7 +461,8 @@ hierarchy is structural, not a model artefact.
 \paragraph{(4) Placebo / negative control} Finally we test the method itself on synthetic data with
 a \emph{known} answer. We plant a true transmission chain plus an isolated ``co-mover'' that moves
 with everyone (via the panic factor) but transmits to no one. The knockout correctly assigns large
-causal effect to the true transmitters and \emph{exactly zero} to the planted co-mover, a distinction
+causal effect to the \emph{upstream} transmitters and \emph{exactly zero} to the planted co-mover---and,
+correctly, to the chain's terminal node, which also transmits to no one---a distinction
 that ordinary correlation centrality cannot make (Figure~\ref{fig:placebo}). The method recovers
 ground truth, so the real-data refutation reflects a property of the method, not wishful thinking.
 
@@ -468,7 +470,8 @@ ground truth, so the real-data refutation reflects a property of the method, not
 \centering
 \includegraphics[width=\columnwidth]{figures/03_placebo.png}
 \caption{Placebo control on synthetic data. A planted spurious co-mover (SPUR) is correlationally
-central but causally inert. The knockout recovers the true transmitters.}
+central but causally inert; the knockout recovers the \emph{upstream} transmitters (A, B) and
+correctly zeroes both SPUR and the chain's terminal node (C).}
 \label{fig:placebo}
 \end{figure}
 
@@ -681,9 +684,9 @@ centrality, at the centre of stablecoin systemic-risk measurement.
 
 \section{Limitations}
 Our model is a calibrated reduced form, not a fully microfounded market, and two of our episodes are
-too sparse to analyze causally. We have tried to meet the natural objections head-on rather than in
-passing. \emph{Circularity} (the estimated network is re-derived from documented reserves, with the
-same answer), \emph{calibration fragility} (the ranking survives $\pm30\%$ perturbation),
+too sparse to analyze causally. We meet the natural objections directly: \emph{circularity} (the
+estimated network is re-derived from documented reserves, with the same answer), \emph{calibration
+fragility} (the ranking survives $\pm30\%$ perturbation),
 \emph{over-mechanical agents} (it survives strategic, adaptive agents), and \emph{method
 self-fulfilment} (a synthetic placebo with known ground truth shows the knockout recovers
 transmitters and zeroes a planted co-mover). The residual threat we cannot remove is that all causal
