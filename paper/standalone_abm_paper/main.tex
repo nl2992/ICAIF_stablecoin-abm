@@ -478,8 +478,8 @@ correctly zeroes both SPUR and the chain's terminal node (C).}
 \end{figure}
 
 \paragraph{Does it generalize across crises?} Beyond the four formal checks, across the crises we can analyze
-(Table~\ref{tab:multi}), the predictor's top hub \emph{is} the causal driver in one (the Terra
-collapse) but \emph{is not} in two others. The ABM turns the Terra case into a stronger contrast.
+(Table~\ref{tab:multi}), the predictor's top hub is \emph{not} the effective causal lever in any of the three: it picks
+an inert venue in SVB and USDT-May, and Terra---where it appears to align---shows the same failure.
 In SVB the contagion is \emph{network-mediated}: the knockout identifies a true causal hub (DAI)
 with $\Delta$-contagion $=0.0011$, while BUSD is correctly zeroed. The May-2022 USDT episode
 (calibrated $3/4$ moments) is a subtler failure: the GNN's top hub (USDC, $0.50$) is causally
@@ -489,25 +489,23 @@ backstop dollar.
 In Terra the collapse is
 \emph{algorithmic} (the UST/LUNA death spiral), not network-transmitted: all hub knockouts produce
 $\Delta\text{-contagion}\approx 0$ regardless of which venue is protected. The GNN still outputs a
-high confidence score for USDC ($0.50$) as the dominant risk hub, but the ABM shows that no hub
-intervention would have mattered. The ABM therefore discriminates the \emph{mechanism}, not just
-the hub ranking: a correlational ranking is unreliable---sometimes right, sometimes badly
-wrong---which is precisely why the causal test is needed. A venue's
-documented out-exposure, which is known \emph{before} any crisis and needs no price data, ranks
-causal importance better than the learned correlational score, and the predictor's top hub is a
-structurally non-transmitting (zero-exposure) venue in three of the five analyzable episodes:
-BUSD in USDC/SVB (Table~\ref{tab:multi}) and in DAI/FTX, and DAI in the BUSD wind-down (the latter
-two are low-contagion episodes, not tabulated).
+high confidence score for USDC ($0.50$) as the dominant risk hub, but protecting USDC yields
+$0\%$ contagion reduction---USDC is a recipient, not a transmitter. The causal lever is origin
+protection: shielding UST eliminates $100\%$ of contagion, and a Terra-native RL regulator
+($94.9\%$ reduction) concentrates its full budget on UST, allocating nothing to USDC.
+The ABM therefore discriminates the \emph{mechanism}: a correlational ranking may superficially
+align while remaining causally inert---which is precisely why the causal test is needed.
+The predictor's top hub is a structurally non-transmitting venue in all three crises:
+BUSD in SVB, USDC in Terra, and USDC in USDT-May (plus BUSD in DAI/FTX and DAI in the BUSD
+wind-down, two lower-contagion episodes not tabulated).
 
 \begin{table}[t]
-\caption{Generalization across crises. The GNN's top hub matches the causal driver in one episode but
-diverges, with a spurious, structurally non-transmitting hub, in the others.
-Spearman $\rho$ measures rank-correlation between GNN predicted importance and ABM causal effect
-across all non-origin venues ($n=5$ or $6$) under the \emph{harmonized} pipeline (the same
-normalization applied to every episode).
-N/a = GNN and ABM agree on the top hub. ``ABM top'' is the highest-$\Delta$ \emph{non-origin}
-venue; in Terra the collapse is algorithmic and all knockouts give $\Delta\approx0$ (see text),
-so its row tests agreement only.
+\caption{Generalization across crises. The GNN's top hub is a structurally non-transmitting
+venue in all three crises. ``Spurious'' means protecting the GNN hub yields $0\%$ contagion
+reduction. Spearman $\rho$ measures rank-correlation between GNN predicted importance and ABM
+causal effect across all non-origin venues ($n=5$ or $6$) under the \emph{harmonized} pipeline.
+``ABM top'' is the highest-$\Delta$ \emph{non-origin} venue; for Terra all knockouts give
+$\Delta\approx0$ (algorithmic crisis---see text), so no hub top exists and $\rho$ is n/a.
 The SVB-specific join (over the $n{=}4$ venues with a nonzero predicted or causal score) gives a
 stronger $\rho{=}{-}0.77$ ($p{=}0.23$).}
 \label{tab:multi}
@@ -518,7 +516,7 @@ stronger $\rho{=}{-}0.77$ ($p{=}0.23$).}
 Episode & GNN hub & ABM top & spurious? & Spearman $\rho$ \\
 \midrule
 USDC / SVB & BUSD & DAI & yes (BUSD) & $-0.54$ \\
-UST / Terra & USDC & USDC & no & n/a \\
+UST / Terra & USDC & --- & yes (USDC) & n/a \\
 USDT (May) & USDC & TUSD & yes & $+0.77$ \\
 \bottomrule
 \end{tabular}
