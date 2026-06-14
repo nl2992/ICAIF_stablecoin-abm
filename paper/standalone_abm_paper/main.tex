@@ -435,8 +435,9 @@ We subject the headline to four independent stress tests.
 \paragraph{(1) Calibration uncertainty} The calibration is not exact, so we perturb the model's
 parameters and network by $\pm30\%$ over 60 random draws and re-run the knockout. USDC is the top
 causal venue in $100\%$ of draws and BUSD stays causally inert in $100\%$ of draws. Across the 60
-draws the USDC origin $\Delta_X$ has mean $0.033$ and 95\% CI $[0.020,\,0.047]$. BUSD has
-$\Delta_X=0.000$ (no variability, exactly zero at every percentile of the draw distribution).
+draws the USDC origin $\Delta_X$ (absolute contagion removed) has mean $0.033$, 95\% CI
+$[0.020,\,0.047]$---essentially the whole baseline contagion, a near-complete reduction---while BUSD
+has $\Delta_X=0.000$ (no variability, exactly zero at every percentile of the draw distribution).
 This is not a near-zero result: BUSD's zero documented out-exposure makes it mechanically
 incapable of transmitting stress (\S\ref{sec:exposure}), and no parameter variation changes
 that structural fact, so the conclusion is not an artifact of one lucky calibration.
@@ -475,7 +476,7 @@ correctly zeroes both SPUR and the chain's terminal node (C).}
 \label{fig:placebo}
 \end{figure}
 
-\paragraph{Does it generalize across crises?} Across the crises we can analyze
+\paragraph{Does it generalize across crises?} Beyond the four formal checks, across the crises we can analyze
 (Table~\ref{tab:multi}), the predictor's top hub \emph{is} the causal driver in one (the Terra
 collapse) but \emph{is not} in two others. The ABM turns the Terra case into a stronger contrast.
 In SVB the contagion is \emph{network-mediated}: the knockout identifies a true causal hub (DAI)
@@ -489,9 +490,9 @@ an algorithmic collapse.'' A correlational ranking is therefore unreliable, some
 sometimes badly wrong, which is precisely why the causal test is needed. A venue's
 documented out-exposure, which is known \emph{before} any crisis and needs no price data, ranks
 causal importance better than the learned correlational score, and the predictor's top hub is a
-structurally non-transmitting (zero-exposure) venue in three of the five analyzable episodes
-(Table~\ref{tab:multi} shows the three contagion-producing episodes; the count also includes the
-two low-contagion episodes, whose top hubs are likewise zero-out-exposure venues).
+structurally non-transmitting (zero-exposure) venue in three of the five analyzable episodes:
+BUSD in USDC/SVB (Table~\ref{tab:multi}) and in DAI/FTX, and DAI in the BUSD wind-down (the latter
+two are low-contagion episodes, not tabulated).
 
 \begin{table}[t]
 \caption{Generalization across crises. The GNN's top hub matches the causal driver in one episode but
