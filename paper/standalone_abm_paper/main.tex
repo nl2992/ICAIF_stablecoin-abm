@@ -648,6 +648,9 @@ documented out-exposure in the reserve-disclosure network, the fraction of other
 reserves backed by that coin. If that out-exposure is near zero the hub is spurious and should be
 discarded. Only survivors receive backstop resources. In the USDC/SVB episode this gate would have
 eliminated BUSD and redirected the entire budget to USDC and DAI.
+Timing is also consequential: a delay of 50 minutes cuts effectiveness from $100\%$
+to $85.4\%$, and a ten-hour lag drops it to $6.7\%$, so the gate must feed on live
+reserve disclosures, not quarterly filings.
 
 The cost of skipping step two is concrete (Table~\ref{tab:interventions}): a supervisor acting on
 correlation alone wastes the entire budget. The balance-sheet gate needs only mandatory
