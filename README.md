@@ -185,6 +185,7 @@ microfounded market.
 | Placebo / negative control | upstream A 0.148, B 0.131 (large); terminal C and spurious SPUR both 0 | `placebo_control.csv`, `placebo_control.json` | `causal_delta_true_W`, `is_true_transmitter` / `is_planted_spurious` |
 | Near-criticality (exact, sub-critical) | netted W acyclic ⇒ spectral radius 1−κ=0.994, half-life 116 | `near_criticality.json` | acyclicity + spectral radius |
 | Cross-crisis generalization | top hub zero-out-exposure in 3 of 5 episodes | `multi_episode_join.csv` | `gnn_top_hub`, `spurious_hub` per episode |
+| Second crisis (USDT-May): GNN top USDC near-inert, TUSD the real relay | USDC Δ=0.0006 vs TUSD Δ=0.0175 (29×), ρ=+0.77 | `multi_episode_join.json` | `USDT_May2022._detail` (per-venue `pred` / `causal_delta`) |
 | Terra is algorithmic (contrast) | all knockouts Δ≈0 | `terra_case_study.json` | `all_deltas_near_zero` |
 | Balance-sheet variant calibrated separately, same verdict | both versions BUSD=0, USDC #1 | `exposure_calibration.csv`, `exposure_join.json` | side-by-side params |
 

@@ -481,14 +481,18 @@ correctly zeroes both SPUR and the chain's terminal node (C).}
 (Table~\ref{tab:multi}), the predictor's top hub \emph{is} the causal driver in one (the Terra
 collapse) but \emph{is not} in two others. The ABM turns the Terra case into a stronger contrast.
 In SVB the contagion is \emph{network-mediated}: the knockout identifies a true causal hub (DAI)
-with $\Delta$-contagion $=0.0011$, while BUSD is correctly zeroed. In Terra the collapse is
+with $\Delta$-contagion $=0.0011$, while BUSD is correctly zeroed. The May-2022 USDT episode
+(calibrated $3/4$ moments) is a subtler failure: the GNN's top hub (USDC, $0.50$) is causally
+near-inert ($\Delta=0.0006$), while the lower-ranked TUSD is the true relay ($\Delta=0.0175$,
+$29\times$ more), so even a globally favourable ranking ($\rho{=}{+}0.77$) misallocates the first
+backstop dollar.
+In Terra the collapse is
 \emph{algorithmic} (the UST/LUNA death spiral), not network-transmitted: all hub knockouts produce
 $\Delta\text{-contagion}\approx 0$ regardless of which venue is protected. The GNN still outputs a
 high confidence score for USDC ($0.50$) as the dominant risk hub, but the ABM shows that no hub
 intervention would have mattered. The ABM therefore discriminates the \emph{mechanism}, not just
-the hub ranking, turning an apparent ``GNN was right'' into ``no correlational ranking can diagnose
-an algorithmic collapse.'' A correlational ranking is therefore unreliable, sometimes right and
-sometimes badly wrong, which is precisely why the causal test is needed. A venue's
+the hub ranking: a correlational ranking is unreliable---sometimes right, sometimes badly
+wrong---which is precisely why the causal test is needed. A venue's
 documented out-exposure, which is known \emph{before} any crisis and needs no price data, ranks
 causal importance better than the learned correlational score, and the predictor's top hub is a
 structurally non-transmitting (zero-exposure) venue in three of the five analyzable episodes:
@@ -504,8 +508,6 @@ normalization applied to every episode).
 N/a = GNN and ABM agree on the top hub. ``ABM top'' is the highest-$\Delta$ \emph{non-origin}
 venue; in Terra the collapse is algorithmic and all knockouts give $\Delta\approx0$ (see text),
 so its row tests agreement only.
-USDT (May) has $\rho{=}{+}0.77$ yet a misidentified top hub: even a globally good ranking can
-misallocate the first backstop dollar.
 The SVB-specific join (over the $n{=}4$ venues with a nonzero predicted or causal score) gives a
 stronger $\rho{=}{-}0.77$ ($p{=}0.23$).}
 \label{tab:multi}
@@ -650,12 +652,9 @@ eliminated BUSD and redirected the entire budget to USDC and DAI.
 
 The cost of skipping step two is concrete (Table~\ref{tab:interventions}): a supervisor acting on
 correlation alone wastes the entire budget. The balance-sheet gate needs only mandatory
-disclosures (a database lookup, no price data or model estimation), and the lesson generalises. SVB
-became systemic not because it was the largest interbank node but because specific stablecoins held
-concentrated reserves there, so GENIUS Act filings should report counterparty-level breakdowns, not
-just reserve totals. The RL result shows the procedure is learnable inside the model, not just analytically correct:
-a PPO agent given only structural wiring funds USDC and DAI and
-nothing to BUSD ($93.7\%$ reduction, seed-stable, above).
+disclosures (a database lookup, no model estimation), and the lesson generalises: SVB became systemic
+because specific stablecoins held concentrated reserves there, so GENIUS Act filings should report
+counterparty-level breakdowns, not just reserve totals.
 
 \section{Discussion}
 \paragraph{What this means for explainable AI in finance} Our result is a clean, quantified instance
