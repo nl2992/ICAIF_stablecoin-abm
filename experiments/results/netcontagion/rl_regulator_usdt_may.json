@@ -1,0 +1,62 @@
+{
+  "episode": "USDT_May2022",
+  "origin": "USDT",
+  "ppo_timesteps": 12000,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "gnn_top_hub": "USDC",
+  "abm_causal_relay": "TUSD",
+  "mean_budget_on_gnn_pick_USDC": 0.0,
+  "mean_budget_on_relay_TUSD": 0.0,
+  "mean_reduction_pct": 89.7,
+  "per_seed": [
+    {
+      "seed": 0,
+      "alloc": {
+        "USDC": 0.0,
+        "TUSD": 0.0,
+        "USDP": 0.0,
+        "BUSD": 0.0,
+        "UST": 0.0,
+        "DAI": 0.0,
+        "USDT": 1.0
+      },
+      "reduction_pct": 89.7,
+      "on_gnn_pick_USDC": 0.0,
+      "on_relay_TUSD": 0.0
+    },
+    {
+      "seed": 1,
+      "alloc": {
+        "USDC": 0.0,
+        "TUSD": 0.0,
+        "USDP": 0.0,
+        "BUSD": 0.0,
+        "UST": 0.0,
+        "DAI": 0.0,
+        "USDT": 1.0
+      },
+      "reduction_pct": 89.7,
+      "on_gnn_pick_USDC": 0.0,
+      "on_relay_TUSD": 0.0
+    },
+    {
+      "seed": 2,
+      "alloc": {
+        "USDC": 0.0,
+        "TUSD": 0.0,
+        "USDP": 0.0,
+        "BUSD": 0.0,
+        "UST": 0.0,
+        "DAI": 0.0,
+        "USDT": 1.0
+      },
+      "reduction_pct": 89.7,
+      "on_gnn_pick_USDC": 0.0,
+      "on_relay_TUSD": 0.0
+    }
+  ]
+}

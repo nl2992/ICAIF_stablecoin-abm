@@ -628,13 +628,14 @@ where $C_0$ is the no-action contagion, $C(a)$ the contagion after spending $a$,
 cost of budget. The agent must therefore learn an efficient allocation rather than simply protect
 everyone. After training, the learned policy allocates
 its budget to USDC and the relay DAI and \emph{none} to BUSD, achieving a $93.7\%$ contagion reduction
-on the headline run (the residual gap to $100\%$ reflects the budget penalty $\beta$: full protection
-is not reward-optimal). This allocation is seed-stable. Across five independently trained seeds the
-contagion reduction is $93.6\%\pm0.1\%$, and \emph{every} seed places $\ge0.9$ of its budget on
-USDC and $\le0.1$ on BUSD. Because the agent is trained and evaluated inside the calibrated
+on the headline run (the gap to $100\%$ reflects the budget penalty $\beta$). Across five seeds
+the reduction is $93.6\%\pm0.1\%$, every seed placing $\ge0.9$ on USDC and $\le0.1$ on BUSD. The
+same holds on a \emph{second} crisis: trained on the May-2022 USDT episode, the regulator
+concentrates on the true source and spends nothing on the GNN's top-ranked hub (USDC), cutting
+contagion $89.7\%$ across three seeds. Because the agent is trained and evaluated inside the calibrated
 model, this is a within-model demonstration that the causal allocation is \emph{learnable} from
 structural wiring alone, not an independent validation; its value is the agreement with the
-explicit knockout and the zero allocation to the spurious hub.
+explicit knockout and the zero allocation to the correlational hub.
 
 
 \subsection{From a causal test to a supervisory gate}

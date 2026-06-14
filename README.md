@@ -181,6 +181,7 @@ microfounded market.
 | Dose-response (reserve strengthening) | 5× $174M/64%, 20× $827M/89%, 50× $2.1B/95% | `partial_backstop.csv`, `partial_backstop_frontier.json` | `cost_proxy_bUSD`, `pct_reduction`; BUSD 0 at every cost |
 | K=1 / K=2 budget allocation | GNN-pick BUSD 0%, ABM-pick USDC 100%; K=2 both 100% (different sets) | `budget_allocation.csv` | `gnn_guided` / `abm_guided` / `rl_regulator` |
 | RL regulator | 93.7% (headline run), 93.6±0.1% (5-seed); origin flag not load-bearing | `rl_regulator.json`, `rl_no_origin_flag.json` | reduction + per-seed allocations |
+| RL regulator generalizes (2nd crisis, USDT-May) | funds the source, 0 on GNN top hub USDC, 89.7% (3 seeds) | `rl_regulator_usdt_may.json` (`python scripts/run_rl_regulator_usdt_may.py`) | `mean_budget_on_relay_TUSD`/`...USDC`, `mean_reduction_pct` |
 | Two-agent robustness; redeemer 7.7×, breaker 63→95% | baseline C per config | `two_agent_robustness.csv`, `adaptive_robustness.csv` | per-config C; circuit-breaker flip |
 | Placebo / negative control | upstream A 0.148, B 0.131 (large); terminal C and spurious SPUR both 0 | `placebo_control.csv`, `placebo_control.json` | `causal_delta_true_W`, `is_true_transmitter` / `is_planted_spurious` |
 | Near-criticality (exact, sub-critical) | netted W acyclic ⇒ spectral radius 1−κ=0.994, half-life 116 | `near_criticality.json` | acyclicity + spectral radius |
