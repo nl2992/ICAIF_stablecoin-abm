@@ -56,7 +56,7 @@ predicted hub ranking is \emph{negatively} correlated with the true causal ranki
 (Spearman~$\rho{=}{-}0.54$ under a normalization applied uniformly across episodes; $-0.77$
 for the SVB-specific computation). The
 most correlationally central venue is the least causally relevant. An RL regulator trained on
-the calibrated ABM, observing only structural network features (including an origin indicator)
+the calibrated ABM, observing only structural network features (origin flag not load-bearing)
 and no causal labels, learns to protect the causal venues and allocates nothing to the spurious
 hub, achieving $93.7\%$ contagion reduction. Intervention effectiveness degrades rapidly with delay:
 $100\%$ at no delay, $85.4\%$ at 50 minutes, $6.7\%$ at 10 hours---speed of action, not just target selection, determines outcome.
