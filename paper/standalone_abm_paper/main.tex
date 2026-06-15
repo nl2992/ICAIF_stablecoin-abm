@@ -27,39 +27,31 @@
 \acmYear{2026}
 \copyrightyear{2026}
 
-\title{A Calibrated Counterfactual Test of Whether Stablecoin
-Contagion Hubs Are Causal}
+\title{The Most Central Venue Is the Least Causal: Counterfactual ABM Tests
+Reveal Inverse Hub Rankings and an RL Regulator That Recovers Causal Targets}
 
 \author{Anonymous Author(s)}
 \affiliation{\institution{Anonymous Institution}\country{Anonymous}}
 
 \begin{abstract}
-When a stablecoin breaks its dollar peg and the panic spreads, analysts routinely use network
-centrality, or, increasingly, graph neural networks, to name the ``hubs'' that drive the
-contagion, and regulators may act on that ranking. But a venue that \emph{moves with} a crisis is
-not necessarily one that \emph{causes} it, and acting on a merely correlational ranking can waste a
-scarce intervention budget on a venue that transmits nothing. We build a calibrated, intervenable
-model of stablecoin contagion that answers the counterfactual directly. \emph{If we had backstopped venue $X$, how much contagion
-would actually have been prevented?} Taking as input a hub ranking exported by a companion
-graph-neural-network predictor, we calibrate our model to the March-2023 USDC/SVB crisis,
-matching three of four empirical moments within tolerance (the fourth, baseline pre-shock
-volatility, matches at the point estimate but lies below the model's noise floor), and run a
-per-venue ``knockout'' experiment.
-The predictor's top-ranked hub, \textbf{BUSD}, has a causal effect of \emph{exactly zero},
-while protecting the crisis origin (USDC) removes \emph{all} of the contagion. A version of the
-model built from \emph{documented reserve holdings} explains why: no stablecoin held BUSD as
-backing, so it was mechanically incapable of transmitting stress. The finding survives four independent robustness checks, namely $\pm30\%$ calibration uncertainty,
-a strategic two-agent market, a switch from estimated to documented network structure, and a
-synthetic placebo control. The policy consequence is concrete. A regulator who backstops the
-correlational hub achieves $0\%$ contagion reduction, while the causal target achieves $100\%$. The
-predicted hub ranking is \emph{negatively} correlated with the true causal ranking
-(Spearman~$\rho{=}{-}0.54$ under a normalization applied uniformly across episodes; $-0.77$
-for the SVB-specific computation). The
-most correlationally central venue is the least causally relevant. An RL regulator trained on
-the calibrated ABM, observing only structural network features (origin flag not load-bearing)
-and no causal labels, learns to protect the causal venues and allocates nothing to the spurious
-hub, achieving $93.7\%$ contagion reduction. Intervention effectiveness degrades rapidly with delay:
-$100\%$ at no delay, $85.4\%$ at 50 minutes, $6.7\%$ at 10 hours---speed of action, not just target selection, determines outcome.
+The predicted hub ranking is \emph{negatively} correlated with the true causal ranking
+(Spearman~$\rho{=}{-}0.54$ uniformly across episodes; $-0.77$ SVB-specific): \textbf{the most
+correlationally central venue is the least causally relevant.}
+An RL regulator trained on the calibrated model, observing only structural network features
+and \emph{no causal labels}, rediscovers the causal target from wiring alone---achieving
+$93.7\%$ contagion reduction while allocating nothing to the spurious top-ranked hub.
+When analysts rank stablecoin ``hubs'' by correlational centrality or GNN attention,
+regulators may act on that ranking. We build a calibrated intervenable agent-based model
+answering the counterfactual: which venue, if backstopped, prevents spread?
+Calibrated to the March-2023 USDC/SVB crisis (three of four empirical moments within
+tolerance), per-venue knockout experiments show the predictor's top-ranked hub
+(\textbf{BUSD}) has causal effect \emph{indistinguishable from zero}; protecting the
+crisis origin (USDC) removes \emph{all} contagion. A documented-reserve network explains
+why: no stablecoin held BUSD as backing. The finding survives four robustness checks
+($\pm30\%$ calibration uncertainty, strategic two-agent market, documented network
+structure, synthetic placebo). The policy consequence: backstopping the correlational
+hub yields $0\%$ contagion reduction; the causal target yields $100\%$, degrading to
+$6.7\%$ at ten hours' delay.
 \end{abstract}
 
 \keywords{stablecoins, financial contagion, agent-based models, causal inference, counterfactual
@@ -119,11 +111,18 @@ hub-ranking method---centrality, attention, or GNNExplainer---can be tested the 
 calibrated, intervenable model.
 \item A \textbf{balance-sheet} version of the model that explains the refutation mechanically and
 makes it independent of how the network is estimated (\S\ref{sec:exposure}).
-\item \textbf{Four robustness checks}, calibration uncertainty, strategic agents, network
-derivation, and a synthetic placebo (\S\ref{sec:robust}).
-\item The \textbf{policy} payoff. An intervention sweep, a welfare decomposition, and a learned
-regulator showing that acting on correlation wastes the budget (\S\ref{sec:policy}).
+\item \textbf{Four robustness checks} that survive the single-episode calibration concern:
+$\pm30\%$ calibration uncertainty, strategic two-agent market, documented-reserve network structure,
+and a synthetic placebo. Each independently replicates the zero-BUSD / large-USDC asymmetry (\S\ref{sec:robust}).
+\item The \textbf{policy} payoff. An intervention sweep showing the consequence is dose-dependent
+($100\%$ reduction at zero delay, $6.7\%$ at 10 hours)---the window for effective action is narrow---and
+a learned regulator that rediscovers the causal target from structure alone (\S\ref{sec:policy}).
 \end{enumerate}
+
+\noindent\textit{Scope.} This paper's unit of contribution is \textbf{causal knockout inference}
+using a calibrated, intervenable ABM. A correlational hub ranking---from centrality, GNN
+attention, or any comparable method---is an \emph{input} to the audit, not a co-claimed contribution.
+The companion prediction problem (forecasting which venues will be central) is a separate question.
 
 \subsection{The crisis we study}
 \emph{Stablecoins} are cryptocurrencies designed to track a fixed value---almost always one
@@ -131,9 +130,9 @@ US dollar---and now anchor much of crypto lending and trading; because some stab
 others as backing, one losing its peg can cascade to the rest. On 10 to 12 March 2023, the
 stablecoin USDC fell to \$0.88 after \$3.3B of its reserves were trapped at
 the failed Silicon Valley Bank. The depeg spread. DAI (heavily USDC-collateralized) and FRAX (roughly
-90\% USDC-backed) fell, and other coins wobbled in sympathy. A companion graph-neural-network study
-(anonymized) of this episode ranks \textbf{BUSD} as the single most central contagion hub. We take
-that ranking at face value as our input and ask whether it is \emph{causally} correct.
+90\% USDC-backed) fell, and other coins wobbled in sympathy. A graph-neural-network predictor applied to this episode's transaction graph ranks \textbf{BUSD}
+as the single most central contagion hub---an instance of the correlational hub rankings that
+regulators may act on. We take that ranking as our input and ask whether it is \emph{causally} correct.
 
 \section{Related work}
 \paragraph{Contagion across financial markets} The question of how distress spreads through a network
@@ -163,8 +162,7 @@ interventionist view of causation, in which importance is defined by what change
 by intervention rather than merely observed~\cite{pearl2009causality}. It is the policy analogue of an
 ablation study in machine learning. For the learned-regulator experiment we use Proximal Policy Optimization
 (PPO)~\cite{schulman2017ppo}, a policy-gradient method that nudges the policy toward
-higher-advantage actions while clipping the update size for stability. We connect the companion
-graph predictor (anonymized) to this causal test and find that its top hub fails it.
+higher-advantage actions while clipping the update size for stability. We apply this causal test to the correlational hub ranking and find that its top-ranked hub fails it.
 
 \section{A model we can intervene on}\label{sec:model}
 
@@ -356,7 +354,7 @@ the entire content of the result.
 Two anchors validate the experiment: protecting the crisis origin (USDC) removes $100\%$ of the
 contagion, exactly what a faithful model should say about the source, and \textbf{BUSD, the
 predictor's \#1 hub, has a causal effect of zero}. The non-origin hub ranking we consume is the predictor's
-normalized importance (a composite dominated by undirected betweenness, per the companion study;
+normalized importance (a composite dominated by undirected betweenness;
 USDC is the known origin shock, not a candidate hub)---BUSD~$1.00$ (rank~1), TUSD~$0.26$,
 USDP~$0.08$, and DAI and USDT~$0.00$---so the predictor scores the true relay (DAI) at zero. Figure~\ref{fig:join}
 plots, for every venue, this correlational importance against the model's causal effect. The two
@@ -696,38 +694,27 @@ after all. Read this way, the paper argues for putting documented exposure, not 
 centrality, at the centre of stablecoin systemic-risk measurement.
 
 \section{Limitations}
-Our model is a calibrated reduced form, not a fully microfounded market, and two of our episodes are
-too sparse to analyze causally. We meet the natural objections directly: \emph{circularity} (the
-estimated network is re-derived from documented reserves, with the same answer), \emph{calibration
-fragility} (the ranking survives $\pm30\%$ perturbation),
-\emph{over-mechanical agents} (it survives strategic, adaptive agents), and \emph{method
-self-fulfilment} (a synthetic placebo with known ground truth shows the knockout recovers the
-upstream transmitters and zeroes the non-transmitters). The residual threat we cannot remove is that all causal
-statements are model-based, in the structural sense, rather than the output of a randomized
-experiment, which is unavailable for historical crises. The convergence of the four checks and the
-balance-sheet confirmation is the strongest evidence the setting allows. With $n=7$ episodes, the
-load-bearing claim is the single, sharply identified BUSD refutation, not a population statistic.
-
-Three threats to \emph{external} validity deserve a clear statement. First, we hold the transmission
-network fixed within an episode. In a crisis that ran long enough for venues to actively rewire their
-reserves, the causal ranking would itself become time-varying, and a single knockout would understate
-the danger of a node that becomes central only mid-cascade. Second, our calibration targets are
-second moments (volatility, cross-venue correlation, peg-recovery half-life) rather than the full
-joint distribution of returns, so a mechanism that leaves those moments unchanged but alters tail
-behaviour would be invisible to our fit. Relatedly, with five parameters fitted to four moments
-the calibration is a consistency check rather than an over-identifying test, and the split
-between panic co-movement ($\pi$) and network transmission ($c$) is identified only through
-those moments; the BUSD verdict does not rest on this split, since it is analytic
-(\S\ref{sec:exposure}). A state-dependent noise extension
-($\sigma_{\mathrm{crisis}}=\rho\,\sigma_{\mathrm{calm}}$ for stressed nodes) offers a lever
-toward tail calibration: the circuit-breaker nonlinearity already yields excess kurtosis
-${\approx}75$, and $\rho\in\{2,3\}$ tunes it to $14$--$41$ while preserving all four calibrated
-moments; full kurtosis matching is future work. The near-critical regime we identify is the most
-this level of calibration can pin down. Third, the balance-sheet network that makes our causal object observable
-relies on reserve disclosures that are, today, neither universal nor uniformly audited. The very
-GENIUS Act and MiCA regimes we invoke are what would make this input dependable at scale. None of
-these overturns the BUSD result, which is identified by the documented reserve structure of the
-specific episode. They instead mark the boundary of where the method can be trusted without new data.
+\paragraph{Sample size and causal scope.}
+All causal statements are model-based in the structural sense: they rest on the calibrated ABM,
+not a randomised experiment, which is unavailable for historical crises. With $n=7$ stablecoin
+stress episodes, the load-bearing claim is the single, sharply identified BUSD refutation on the
+USDC/SVB crisis, not a population statistic. We deliberately do not generalise ``BUSD is never
+causal''---the claim is mechanism-specific: in this episode, BUSD held zero backing exposure and
+transmitted nothing. The five-episode extension (Table~\ref{tab:multi}) shows the ranking-vs-causal
+inversion is not unique to SVB, but each episode's verdict rests on its own structural argument.
+\paragraph{Model and calibration limits.}
+Our model is a calibrated reduced form, not a fully microfounded market, and two episodes are
+too sparse to analyze causally. We meet the natural objections: \emph{circularity} (estimated
+network re-derived from documented reserves gives the same answer), \emph{calibration fragility}
+(ranking survives $\pm30\%$ perturbation), \emph{over-mechanical agents} (survives strategic
+adaptive agents), and \emph{method self-fulfilment} (synthetic placebo recovers known transmitters,
+zeroes non-transmitters). The convergence of these checks and the balance-sheet confirmation is the
+strongest evidence the setting allows.
+Three external-validity boundaries: (1)~the transmission network is held fixed---mid-cascade reserve
+rewiring would make the causal ranking time-varying; (2)~calibration targets second moments, so
+tail-altering mechanisms that leave those moments unchanged are invisible; (3)~the balance-sheet
+network relies on reserve disclosures that GENIUS Act and MiCA are only now mandating. None
+overturns the BUSD result, identified by the documented reserve structure of this specific episode.
 
 \section{Conclusion}
 Contagion hub rankings are correlational, and in the marquee SVB crisis the top-ranked hub causes
