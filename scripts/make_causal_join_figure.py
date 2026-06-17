@@ -78,14 +78,10 @@ def main() -> None:
     ax.axhline(0, color=ps.GREY, lw=0.7, ls=":", zorder=1)
     ax.set_xlabel("GNN predicted hub importance (correlational score, normalized)")
     ax.set_ylabel("ABM causal effect\n(% contagion reduction from full backstop)")
-    ax.set_title("Correlation is not causation: BUSD is a hub with no causal effect")
     ax.set_xlim(-0.08, 1.12)
     ax.set_ylim(-8, 112)
 
-    ax.annotate(f"Spearman $\\rho = {rho:.2f}$ (predicted vs. causal)",
-                xy=(0.42, 30), fontsize=10, color=ps.INK, style="italic")
-    ax.annotate("BUSD P95 causal $\\Delta$ = exactly 0.0\nacross 60 calibration draws",
-                xy=(0.52, 8), fontsize=8.5, color=ps.RED)
+    ax.annotate(f"Spearman $\\rho = {rho:.2f}$", xy=(0.42, 30), fontsize=9.5, color=ps.INK)
 
     ax.legend(loc="center right", fontsize=8.5, frameon=False)
     fig.tight_layout()
