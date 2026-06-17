@@ -176,9 +176,7 @@ def _plot(cf, out_exp, gnn_top, path):
                     color=ps.INK)
     ax.set_xlabel("GNN predicted importance (correlational hub score)")
     ax.set_ylabel("Documented out-exposure\n(others' reserves backed by this asset)")
-    ax.set_title("Top hub BUSD has the highest predicted importance\n"
-                 "but zero documented systemic exposure")
-    ax.grid(alpha=0.25)
+    ax.set_title("Predicted importance vs documented exposure")
     fig.tight_layout(); fig.savefig(path, dpi=200); plt.close(fig)
     print("figure ->", path)
 

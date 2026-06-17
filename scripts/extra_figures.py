@@ -47,8 +47,8 @@ def fig_bimodal():
     ax.axhline(0.1376, ls="--", color="k", alpha=0.6, label="empirical target (0.14)")
     ax.set_xlabel("shock / contagion intensity (relative)")
     ax.set_ylabel("peak contagion magnitude")
-    ax.set_title("The AMM depeg is bimodal and cannot hit the target")
-    ax.legend(fontsize=8); ax.grid(alpha=0.25)
+    ax.set_title("AMM vs networked depeg response")
+    ax.legend(fontsize=8)
     fig.tight_layout(); fig.savefig(OUT / "fig_bimodal.png"); plt.close(fig)
     print("fig_bimodal ok")
 

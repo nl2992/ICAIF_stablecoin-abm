@@ -142,13 +142,12 @@ def _plot(df, path):
     ax.axhline(0, color="k", lw=0.5, ls=":")
     ax.set_xlabel("Correlation centrality (what a GNN hub score rewards)")
     ax.set_ylabel("Causal effect (knockout, recovered W)")
-    ax.set_title("Placebo control: the method recovers ground truth")
+    ax.set_title("Correlation centrality vs causal effect")
     from matplotlib.lines import Line2D
     ax.legend(handles=[
         Line2D([0], [0], marker="o", color="w", markerfacecolor=ps.GREEN, label="true transmitter", markersize=10),
         Line2D([0], [0], marker="X", color="w", markerfacecolor=ps.RED, label="planted spurious", markersize=11),
     ], fontsize=9)
-    ax.grid(alpha=0.25)
     fig.tight_layout(); fig.savefig(path, dpi=200); plt.close(fig)
     print("figure ->", path)
 

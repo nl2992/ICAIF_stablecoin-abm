@@ -138,7 +138,6 @@ def _plot(df, policy, base, path):
                      va="center", fontsize=8)
     axes[0].set_xlabel("Contagion reduction (%)")
     axes[0].set_title("Best reduction by intervention family")
-    axes[0].grid(axis="x", alpha=0.25)
 
     # right: the policy punchline
     picks = [f'GNN hub\n({policy["gnn_correlational_pick"].split("/")[0]})',
@@ -146,10 +145,10 @@ def _plot(df, policy, base, path):
     vals = [policy["gnn_pick_contagion_reduction_pct"], policy["abm_pick_contagion_reduction_pct"]]
     axes[1].bar(picks, vals, color=[ps.RED, ps.GREEN])
     for i, v in enumerate(vals):
-        axes[1].text(i, v + 1, f"{v:.0f}%", ha="center", fontsize=11, fontweight="bold")
+        axes[1].text(i, v + 1, f"{v:.0f}%", ha="center", fontsize=11)
     axes[1].set_ylabel("Contagion reduction (%)")
     axes[1].set_title("One-venue budget: correlational hub vs causal pick")
-    axes[1].set_ylim(0, 105); axes[1].grid(axis="y", alpha=0.25)
+    axes[1].set_ylim(0, 105)
     fig.tight_layout(); fig.savefig(path, dpi=200); plt.close(fig)
     print("figure ->", path)
 
