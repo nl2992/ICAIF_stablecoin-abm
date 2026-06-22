@@ -173,15 +173,15 @@ higher-advantage actions while clipping the update size for stability. We apply 
 \section{A model we can intervene on}\label{sec:model}
 
 \subsection{Why not an off-the-shelf market simulator}
-Our first attempt used a standard automated-market-maker (AMM) simulator populated with trading
-agents, arbitrageurs, redeemers, liquidity providers, noise traders. It proved unusable for
-calibration because its depeg response is \emph{bimodal}. For almost any parameter setting the
-simulated pool either shrugs off a shock (essentially no depeg) or collapses entirely to the price
-floor, with no smooth regime in between (Figure~\ref{fig:bimodal}). A model that can only produce
-``nothing'' or ``everything'' cannot be tuned to reproduce a realistic $\sim$14\% depeg, and so fails
-any honest calibration test. This is an instance of the well-known difficulty of calibrating
-agent-based financial models~\cite{gu2024spoofability}. We therefore adopt a transparent reduced-form
-model whose contagion magnitude is a \emph{smooth}, controllable function of its parameters.
+Our first attempt used a standard automated-market-maker (AMM) simulator with trading agents
+(arbitrageurs, redeemers, liquidity providers, noise traders). It proved unusable for calibration
+because its depeg response is \emph{bimodal}: for almost any parameter setting the pool either
+shrugs off the shock or collapses to the price floor, with no smooth regime between
+(Figure~\ref{fig:bimodal}). A model that produces only ``nothing'' or ``everything'' cannot be
+tuned to a realistic $\sim$14\% depeg---an instance of the known difficulty of calibrating
+agent-based financial models~\cite{gu2024spoofability}. We therefore adopt a transparent
+reduced-form model whose contagion magnitude is a \emph{smooth}, controllable function of its
+parameters.
 
 \begin{figure}[t]
 \centering
@@ -573,11 +573,9 @@ knockout effect $\Delta_X$.
 In the model, protecting USDC removes $100\%$ of the contagion, strengthening its reserves
 twentyfold removes $89\%$, a circuit breaker removes $85\%$, and gating
 redemptions removes $100\%$. Protecting or strengthening BUSD removes \emph{nothing}, at any
-intensity. The welfare decomposition makes the distributional picture concrete and quantitative:
-protecting USDC \emph{Pareto-dominates} no intervention, driving every victim's peak depeg to
-zero (e.g.\ DAI $0.138\!\to\!0$, USDC $0.103\!\to\!0$), whereas protecting BUSD leaves the
-per-venue loss matrix \emph{identical} to no intervention (maximum change from baseline
-$=0$ across all six venues), so no agent benefits from the budget.
+intensity. The welfare picture is just as sharp: protecting USDC \emph{Pareto-dominates} no
+intervention, driving every victim's peak depeg to zero, whereas protecting BUSD leaves the
+per-venue loss matrix \emph{identical} to baseline, so no agent benefits from the budget.
 
 Table~\ref{tab:interventions} reports the full sweep across intervention families and intensities.
 Two structural facts stand out. Every intervention applied to a \emph{causal} venue (USDC) or to the
@@ -618,7 +616,7 @@ correlational ranking.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.88\textwidth]{figures/04_interventions.png}
+\includegraphics[width=0.74\textwidth]{figures/04_interventions.png}
 \caption{The left panel shows the best contagion reduction by intervention family. The right panel
 shows a one-venue budget spent on the correlational hub (BUSD) yielding $0\%$, and on the causal pick
 (USDC), $100\%$.}
@@ -687,6 +685,13 @@ with every stressed coin, hence high betweenness and attention---but co-movement
 \emph{own} idiosyncratic troubles transmits nothing to others, precisely the case the knockout
 detects and why the balance sheet (no one holds BUSD) is the decisive tie-breaker.
 
+\paragraph{Two mechanisms behind apparent hubness} Apparent hubness can arise two ways. The first is
+\emph{balance-sheet exposure}---a venue transmits because others hold it as backing---which our
+knockout isolates directly. The second is \emph{information coordination}: recent work argues that a
+transparent, named issuer can become a focal point for coordinated withdrawal independent of any
+balance-sheet link~\cite{iaqf_ucla_transparency_2026}. Centrality conflates the two; only an
+intervenable test separates a transmitter from a coordination target.
+
 \paragraph{Relation to network systemic-risk measures} Our knockout is a counterfactual cousin of
 DebtRank-style centrality~\cite{battiston2012debtrank}, which scores a node by how much distress
 propagates from it through a \emph{known} exposure network. Our setting inverts the difficulty: the
@@ -699,21 +704,18 @@ centrality, at the centre of stablecoin systemic-risk measurement.
 
 \section{Limitations}
 \paragraph{Sample size and causal scope.}
-All causal statements are model-based in the structural sense: they rest on the calibrated ABM,
-not a randomised experiment, which is unavailable for historical crises. With $n=7$ stablecoin
-stress episodes, the load-bearing claim is the single, sharply identified BUSD refutation on the
-USDC/SVB crisis, not a population statistic. We deliberately do not generalise ``BUSD is never
-causal''---the claim is mechanism-specific: in this episode, BUSD held zero backing exposure and
-transmitted nothing. The five-episode extension (Table~\ref{tab:multi}) shows the ranking-vs-causal
-inversion is not unique to SVB, but each episode's verdict rests on its own structural argument.
+All causal statements are model-based: they rest on the calibrated ABM, not a randomised experiment,
+which is unavailable for historical crises. With $n=7$ episodes, the load-bearing claim is the single,
+sharply identified BUSD refutation on USDC/SVB, not a population statistic. We do not generalise
+``BUSD is never causal''---the claim is mechanism-specific: here BUSD held zero backing exposure and
+transmitted nothing. The five-episode extension (Table~\ref{tab:multi}) shows the inversion is not
+unique to SVB, but each episode's verdict rests on its own structural argument.
 \paragraph{Model and calibration limits.}
 Our model is a calibrated reduced form, not a fully microfounded market, and two episodes are
-too sparse to analyze causally. We meet the natural objections: \emph{circularity} (estimated
-network re-derived from documented reserves gives the same answer), \emph{calibration fragility}
-(ranking survives $\pm30\%$ perturbation), \emph{over-mechanical agents} (survives strategic
-adaptive agents), and \emph{method self-fulfilment} (synthetic placebo recovers known transmitters,
-zeroes non-transmitters). The convergence of these checks and the balance-sheet confirmation is the
-strongest evidence the setting allows.
+too sparse to analyze causally. The natural objections are met by the robustness checks
+(\S\ref{sec:robust}): circularity, calibration fragility, over-mechanical agents, and method
+self-fulfilment each leave the zero-BUSD / large-USDC asymmetry intact; with the balance-sheet
+confirmation, this is the strongest evidence the setting allows.
 Three external-validity boundaries: (1)~the transmission network is held fixed---mid-cascade reserve
 rewiring would make the causal ranking time-varying; (2)~calibration targets second moments, so
 tail-altering mechanisms that leave those moments unchanged are invisible; (3)~the balance-sheet
