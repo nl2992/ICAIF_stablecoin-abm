@@ -16,10 +16,10 @@ the real market has that the ABM lacks.  Document it honestly.
 
 | Moment | Empirical | Simulated | Rel. error | Tolerance | Pass? |
 |---|---|---|---|---|---|
-| Calm OU half-life (steps) | 3.0 | [X.X] | [X%] | 30% | [✅/❌] |
-| Crisis contagion magnitude | 0.842 | [X.XXX] | [X%] | 25% | [✅/❌] |
-| Baseline price vol | 0.003 | [X.XXX] | [X%] | 30% | [✅/❌] |
-| Cross-venue ρ̂ (crisis) | 0.576 | [X.XXX] | [X%] | 30% | [✅/❌] |
+| Calm OU half-life (steps) | 3.0 | [X.X] | [X%] | 30% | [pass/fail] |
+| Crisis contagion magnitude | 0.842 | [X.XXX] | [X%] | 25% | [pass/fail] |
+| Baseline price vol | 0.003 | [X.XXX] | [X%] | 30% | [pass/fail] |
+| Cross-venue ρ̂ (crisis) | 0.576 | [X.XXX] | [X%] | 30% | [pass/fail] |
 
 Overall gate: [PASS / FAIL] ([X]/4 moments within tolerance)
 

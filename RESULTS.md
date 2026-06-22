@@ -21,10 +21,10 @@ for USDC/SVB + the locked stylized facts):
 
 | moment | empirical | simulated | rel. err | pass |
 |---|---|---|---|---|
-| contagion magnitude | 0.1376 | 0.1376 | 0.0% | ✅ |
-| crisis half-life (steps) | 116 | 116.0 | 0.0% | ✅ |
-| baseline price vol | 0.0030 | 0.0029 | 3.8% | ✅ |
-| cross-venue ρ | 0.576 | 0.640 | 11% | ✅ |
+| contagion magnitude | 0.1376 | 0.1376 | 0.0% | pass |
+| crisis half-life (steps) | 116 | 116.0 | 0.0% | pass |
+| baseline price vol | 0.0030 | 0.0029 | 3.8% | pass |
+| cross-venue ρ | 0.576 | 0.640 | 11% | pass |
 
 `experiments/results/netcontagion/calibration_moments.csv`. Params:
 coupling 0.022, κ 0.006 (→ half-life 116), common-factor 0.0028, σ 0.0021, shock 0.103.
