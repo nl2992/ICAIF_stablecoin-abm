@@ -82,31 +82,35 @@ is very different from \emph{causing} the spread. A coin can plunge in lockstep 
 transmitting nothing to anyone, because it may be failing for its own, unrelated reasons. Backing it up
 would calm nothing, and the budget would be wasted.
 
-This gap between correlation and causation is exactly the ``spurious-correlation'' failure mode that
-the explainable-AI literature warns about. It matters here because the stakes are concrete. The largest
-stablecoins are worth tens of billions of dollars and sit at the centre of decentralized finance, so a
-disorderly depeg can trigger forced liquidations well beyond the coin itself, and a public backstop or
-reserve-transparency programme has only finite capacity. With stablecoins now explicitly regulated by
-the US GENIUS Act and the EU's MiCA framework~\cite{genius2025,mica2023}, a contagion ranking that is
-acted upon by a supervisor can misallocate that capacity onto a venue that, in truth, transmits nothing.
+This gap between correlation and causation is the ``spurious-correlation'' failure mode the
+explainable-AI literature warns about, and here the stakes are concrete. The largest stablecoins are
+worth tens of billions and sit at the centre of decentralized finance, so a disorderly depeg can
+trigger forced liquidations well beyond the coin itself, while a public backstop has only finite
+capacity. With stablecoins now regulated by the US GENIUS Act and the EU's MiCA
+framework~\cite{genius2025,mica2023}, a ranking acted upon by a supervisor can misallocate that
+capacity onto a venue that, in truth, transmits nothing.
 
 \subsection{Our approach: ask the counterfactual}
 The only way to know whether protecting $X$ would have stopped contagion is to ask a
-\emph{counterfactual}. Re-run the crisis with $X$ held safely at its peg, and measure how much the
-\emph{other} venues are spared. History runs only once, so we need
-a \emph{model} of the crisis that we can intervene on. We therefore build a contagion model,
-calibrate it so that, left alone, it reproduces the real crisis, and then perform virtual
-``knockout'' experiments---where a knockout \emph{protects} a venue (holds it at its peg),
-removing it as a transmitter, rather than deleting the node. This is the agent-based and network-propagation tradition of systemic-risk
-analysis: a calibrated simulator answers mechanism and policy questions that
-observation alone cannot~\cite{gu2024spoofability,battiston2012debtrank}.
+\emph{counterfactual}: re-run the crisis with $X$ held at its peg and measure how much the
+\emph{other} venues are spared. History runs once, so we need a \emph{model} we can intervene on.
+We build a contagion model, calibrate it so that left alone it reproduces the real crisis, then
+perform virtual ``knockout'' experiments---a knockout \emph{protects} a venue (holds it at its peg),
+removing it as a transmitter rather than deleting the node. This is the agent-based,
+network-propagation tradition of systemic-risk analysis: a calibrated simulator answers mechanism
+and policy questions observation alone cannot~\cite{gu2024spoofability,battiston2012debtrank}.
 
 We make the following contributions.
 \begin{enumerate}
 \item A contagion model that \textbf{calibrates to within tolerance on three of four} empirical moments (contagion magnitude, crisis half-life, cross-venue correlation $\rho$. See Table~\ref{tab:calib} for the honest calibration result including the baseline-volatility caveat)
 of the USDC/SVB crisis, after we show why an off-the-shelf market simulator cannot (\S\ref{sec:model}).
+The single moment outside tolerance is baseline (pre-crisis) volatility, which does \emph{not}
+enter the knockout's deterministic contagion propagation, so it cannot drive the causal verdict.
 \item A per-venue \textbf{causal knockout} that \emph{refutes} the predictor's top hub (zero causal
-effect, \S\ref{sec:knockout}). The knockout is a \emph{transferable audit}: any correlational
+effect, \S\ref{sec:knockout}). This is not a single-episode artefact: across \emph{every} episode
+the correlational and causal rankings are \emph{inversely} related (Spearman $\rho=-0.54$ pooled,
+$-0.77$ on SVB), a second, independent line of evidence that centrality mislabels the causal target.
+The knockout is a \emph{transferable audit}: any correlational
 hub-ranking method---centrality, attention, or GNNExplainer---can be tested the same way against a
 calibrated, intervenable model.
 \item A \textbf{balance-sheet} version of the model that explains the refutation mechanically and
@@ -123,13 +127,15 @@ a learned regulator that rediscovers the causal target from structure alone (\S\
 using a calibrated, intervenable ABM. A correlational hub ranking---from centrality, GNN
 attention, or any comparable method---is an \emph{input} to the audit, not a co-claimed contribution.
 Forecasting which venues will be central is a separate prediction question and out of scope here.
+Concurrent analyses of these episodes report correlational rankings or build predictors; our
+distinct object is a \emph{causal} knockout refutation with a balance-sheet mechanism.
 
 \subsection{The crisis we study}
 \emph{Stablecoins} are cryptocurrencies designed to track a fixed value---almost always one
 US dollar---and now anchor much of crypto lending and trading; because some stablecoins hold
 others as backing, one losing its peg can cascade to the rest. On 10 to 12 March 2023, the
-stablecoin USDC fell to \$0.88 after \$3.3B of its reserves were trapped at
-the failed Silicon Valley Bank. The depeg spread. DAI (heavily USDC-collateralized) and FRAX (roughly
+USDC slid to roughly 88 cents on the dollar once \$3.3 billion of its cash
+reserves were stranded at the collapsed Silicon Valley Bank. The depeg spread. DAI (heavily USDC-collateralized) and FRAX (roughly
 90\% USDC-backed) fell, and other coins wobbled in sympathy. A graph-neural-network predictor applied to this episode's transaction graph ranks \textbf{BUSD}
 as the single most central contagion hub---an instance of the correlational hub rankings that
 regulators may act on. We take that ranking as our input and ask whether it is \emph{causally} correct.
@@ -669,28 +675,26 @@ counterparty-level breakdowns, not just reserve totals.
 \section{Discussion}
 \paragraph{What this means for explainable AI in finance} Our result is a clean, quantified instance
 of the spurious-correlation problem that motivates intrinsic interpretability. An attribution method
-(centrality, attention) told us BUSD was \emph{the} hub. A causal test told us it transmitted nothing.
-The lesson is not that the predictor is wrong. It correctly identified a venue that moves with the
-crisis, but that \emph{attribution and causation are different questions}, and a high-stakes
-intervention decision needs the second. Centrality answers ``what moved together?''; the knockout
-answers ``what, if removed, would have changed the outcome?''---only the latter is actionable.
+(centrality, attention) told us BUSD was \emph{the} hub; a causal test told us it transmitted nothing.
+The predictor is not wrong---it correctly identified a venue that moves with the crisis---but
+\emph{attribution and causation are different questions}, and a high-stakes intervention needs the
+second. Centrality answers ``what moved together?''; the knockout answers ``what, if removed, would
+have changed the outcome?''---only the latter is actionable.
 
-\paragraph{Why BUSD looked like a hub} BUSD was undergoing a regulatory wind-down in early 2023, so
-it was being steadily redeemed and traded nervously throughout the SVB weekend. That
-co-movement gave it high correlation with every other stressed coin, and hence high betweenness and
-high model attention. But co-movement driven by a coin's \emph{own} idiosyncratic troubles transmits
-nothing to others, precisely the case the knockout is built to detect, and precisely why the balance
-sheet (no one holds BUSD) is the decisive tie-breaker.
+\paragraph{Why BUSD looked like a hub} BUSD was in a regulatory wind-down in early 2023, steadily
+redeemed and traded nervously through the SVB weekend. That co-movement gave it high correlation
+with every stressed coin, hence high betweenness and attention---but co-movement driven by a coin's
+\emph{own} idiosyncratic troubles transmits nothing to others, precisely the case the knockout
+detects and why the balance sheet (no one holds BUSD) is the decisive tie-breaker.
 
-\paragraph{Relation to network systemic-risk measures} Our knockout is, in spirit, a counterfactual
-cousin of DebtRank-style centrality~\cite{battiston2012debtrank}, which scores a node by how much
-distress propagates from it through a \emph{known} exposure network; our setting inverts the
-difficulty. The exposure
-network for stablecoins is not cleanly observed in real time, so a practitioner is tempted to substitute
-a \emph{price-derived} network (correlation, attention), which silently swaps a causal object for a
-correlational one. The knockout makes that substitution's cost visible; the balance-sheet variant
-shows the genuinely causal object---who holds whom as reserves---is recoverable from disclosures
-after all. Read this way, the paper argues for putting documented exposure, not estimated
+\paragraph{Relation to network systemic-risk measures} Our knockout is a counterfactual cousin of
+DebtRank-style centrality~\cite{battiston2012debtrank}, which scores a node by how much distress
+propagates from it through a \emph{known} exposure network. Our setting inverts the difficulty: the
+stablecoin exposure network is not cleanly observed in real time, tempting a practitioner to
+substitute a \emph{price-derived} network (correlation, attention) and silently swap a causal
+object for a correlational one. The knockout makes that substitution's cost visible, and the
+balance-sheet variant shows the genuinely causal object---who holds whom as reserves---is
+recoverable from disclosures. The paper thus argues for putting documented exposure, not estimated
 centrality, at the centre of stablecoin systemic-risk measurement.
 
 \section{Limitations}
@@ -718,15 +722,15 @@ overturns the BUSD result, identified by the documented reserve structure of thi
 
 \section{Conclusion}
 Contagion hub rankings are correlational, and in the marquee SVB crisis the top-ranked hub causes
-\emph{no} contagion, because, as the balance sheet confirms, no stablecoin's peg depended on it. A
-calibrated, intervenable model supplies the causal test that centrality cannot, and the disagreement
-changes the policy outcome. Acting on the correlational hub wastes the entire budget that the causal
-target would have spent to contain the cascade. As supervisors operationalise the GENIUS Act and MiCA,
-the practical recommendation is conservative. When the stakes are an
-intervention, validate a contagion ranking against a causal counterfactual, and where the two
-disagree, prefer the documented reserve-exposure network: it is transparent, auditable, and
-computable before any crisis without market data. Contagion analytics
-intended to guide intervention should report \emph{validated causation}, not centrality alone.
+\emph{no} contagion: as the balance sheet confirms, no stablecoin's peg depended on it. A
+calibrated, intervenable model supplies the causal test centrality cannot, and the disagreement
+changes the policy outcome---acting on the correlational hub wastes the entire budget the causal
+target would have spent to contain the cascade. As supervisors operationalise the GENIUS Act and
+MiCA, the recommendation is conservative: when the stakes are an intervention, validate a contagion
+ranking against a causal counterfactual, and where the two disagree prefer the documented
+reserve-exposure network---transparent, auditable, and computable before any crisis without market
+data. Contagion analytics meant to guide intervention should report \emph{validated causation}, not
+centrality alone.
 
 \begin{acks}
 Code and artefacts are available at an anonymized repository (link provided at camera-ready).
